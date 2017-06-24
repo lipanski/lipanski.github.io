@@ -38,7 +38,7 @@ The final step is to **enable waking up from stand-by**:
 echo "enabled" > /sys/bus/usb/devices/1-2.1/power/wakeup
 ```
 
-In cae you ever want to **disable waking up from stand-by**, replace `enabled` with `disabled`:
+In case you ever want to **disable waking up from stand-by**, replace `enabled` with `disabled`:
 
 ```sh
 # Replace 1-2.1 with the subdirectory name matching your product
