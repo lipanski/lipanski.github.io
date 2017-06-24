@@ -27,7 +27,7 @@ tail /sys/bus/usb/devices/*/idVendor | grep -B1 046d
 tail /sys/bus/usb/devices/*/idProduct | grep -B1 c52b
 ```
 
-This will print out the contents of every `idVendor` and `idProduct` file inside the `/sys/bus/usb/devices` subdirectories that matches the given vendor and product IDs, including the full path of the file that contains this.
+This will print out the contents of every `idVendor` and `idProduct` file inside the `/sys/bus/usb/devices` subdirectories that matches the given vendor and product IDs, including the full path of the file that contains them.
 
 Look for the subdirectory name that matches both. In my case, it was `/sys/bus/usb/devices/1-2.1`.
 
