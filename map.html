@@ -34,11 +34,17 @@
       var map = L.map('map')
       map.setView([46.72, 12.61], 5)
 
-      var layerUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-      var layerAttribution='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+      // More providers: https://leaflet-extras.github.io/leaflet-providers/preview/
+
+      // var layerUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      // var layerAttribution='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+
+      var layerUrl = 'http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}'
+      var layerAttribution = 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC'
+
       var layer = new L.TileLayer(layerUrl, {
-        minZoom: 5,
-        maxZoom: 12,
+        minZoom: 4,
+        maxZoom: 14,
         attribution: layerAttribution
       }).addTo(map)
 
@@ -49,18 +55,23 @@
         ["Barcelona", 41.385064, 2.173403],
         ["Paris", 48.856614, 2.352222],
         ["Karlsruhe", 49.006890, 8.403653],
+        ["Rastatt", 48.859117, 8.205910],
         ["Heidelberg", 49.398752, 8.672434],
         ["Monchengladbach", 51.180457, 6.442804],
+        ["Dusseldorf", 51.227741, 6.773456],
+        ["Koln", 50.937531, 6.960279],
         ["Amsterdam", 52.370216, 4.895168],
         ["Frankfurt", 50.110922, 8.682127],
         ["Freiburg", 47.999008, 7.842104],
         ["Strassbourg", 48.573405, 7.752111],
         ["Colmar", 48.079359, 7.358512],
+        ["Porto", 41.157944, -8.629105],
         ["London", 51.507351, -0.127758],
         ["Basildon", 51.576084, 0.488736],
         ["Nice", 43.710173, 7.261953],
         ["Bucuresti", 44.426767, 26.102538],
         ["Tulcea", 45.171616, 28.791444],
+        ["Sfantu Gheorghe (Delta Dunarii)", 44.896350, 29.593856],
         ["New York", 40.712784, -74.005941],
         ["Washington DC", 38.907192, -77.036871],
         ["Cranford", 40.658421, -74.299593],
@@ -75,6 +86,7 @@
         ["Budapesta", 47.497912, 19.040235],
         ["Ljiubliana", 46.056947, 14.505751],
         ["Maribor", 46.554650, 15.645881],
+        ["Piran", 45.528319, 13.568289],
         ["Wien", 48.208174, 16.373819],
         ["Krakow", 50.064650, 19.944980],
         ["Auschwitz", 50.034398, 19.209778],
@@ -87,13 +99,57 @@
         ["Ravenna", 44.418360, 12.203529],
         ["Bellinzona", 46.194622, 9.024412],
         ["Locarno", 46.166999, 8.794264],
+        ["Malvaglia", 46.411020, 8.981180],
         ["Basel", 47.559599, 7.588576],
         ["Luzern", 47.050168, 8.309307],
         ["Copenhaga", 55.676097, 12.568337],
+        ["Weimar", 50.979493, 11.323544],
+        ["Jena", 50.927054, 11.589237],
+        ["Erfurt", 50.984768, 11.029880],
+        ["Oradea", 47.046501, 21.918944],
+        ["Sibiu", 45.798327, 24.125583],
+        ["Cisnadioara", 45.707934, 24.108560],
+        ["Sighisoara", 46.219702, 24.796388],
+        ["Targu Mures", 46.538586, 24.551439],
+        ["Turda", 46.564676, 23.797106],
+        ["Braila", 45.265246, 27.959471],
+        ["Constanta", 44.159801, 28.634814],
+        ["Costinesti", 43.956965, 28.638097],
+        ["Eforie Sud", 44.025836, 28.648635],
+        ["Tuzla", 44.002838, 28.637668],
+        ["2 Mai", 43.787078, 28.573610],
+        ["Vama Veche", 43.752924, 28.572549],
+        ["Medgidia", 44.241627, 28.277734],
+        ["Mircea Voda", 44.280728, 28.178286],
+        ["Suceava", 47.663452, 26.273230],
+        ["Gura Humorului", 47.552515, 25.885585],
+        ["Voronet", 47.517072, 25.864167],
+        ["Sucevita", 47.781957, 25.708800],
+        ["Arbore", 47.732258, 25.926164],
+        ["Piatra Neamt", 46.929962, 26.377979],
+        ["Ploiesti", 44.936664, 26.012862],
+        ["Curtea de Arges", 45.140597, 24.668518],
+        ["Fagaras", 45.841640, 24.973095],
+        ["Sfantu Gheorghe", 45.860937, 25.788580],
+        ["Covasna", 45.847277, 26.178345],
+        ["Alba Iulia", 46.082337, 23.569027],
+        ["Tarnaveni", 46.329314, 24.293578],
+        ["Rasnov", 45.574627, 25.454028],
+        ["Cristian", 45.628530, 25.481582],
+        ["Predeal", 45.496395, 25.581506],
+        ["Busteni", 45.409715, 25.534224],
+        ["Sinaia", 45.331043, 25.562350],
+        ["Bran", 45.519192, 25.369683],
+        ["Poiana Marului", 45.604951, 25.307591],
+        ["Wissembourg", 49.036858, 7.944540],
+        ["Cuhr", 46.850783, 9.531986],
+        ["Cazis", 46.720780, 9.430151],
+        ["Thusis", 46.696014, 9.439494],
+
       ]
 
       places.forEach(function(place) {
-        L.marker([place[1], place[2]]).addTo(map);
+        L.marker([place[1], place[2]]).bindTooltip(place[0]).addTo(map);
       });
 
     </script>
