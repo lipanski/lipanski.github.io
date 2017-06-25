@@ -14,7 +14,6 @@
     <div class="wrapper">
       <header>
         <h1>{{ site.title | default: site.github.repository_name }}</h1>
-        <p><em>{{ site.description | default: site.github.project_tagline }}</em></p>
         <p>
           <a href="/">Home</a>
           &nbsp;|&nbsp;
@@ -28,7 +27,7 @@
       {{ content }}
 
       </section>
-      <footer></footer>
+      <footer>&copy; Florin Lipan</footer>
     </div>
     <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
     {% if site.google_analytics %}
