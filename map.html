@@ -1,43 +1,69 @@
 <!doctype html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="en-US">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>{{ site.title }}</title>
-    <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
     <meta name="viewport" content="width=device-width">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <title>Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css"
+      integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ=="
+      crossorigin=""/>
+    <style>
+      html {
+        width:100%;
+        height:100%;
+      }
+
+      body {
+        width:100%;
+        height:100%;
+      }
+
+      #map {
+        width:100%;
+        height:100%;
+      }
+    </style>
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"
+       integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg=="
+       crossorigin=""></script>
   </head>
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>{{ site.title }}</h1>
-        <p>
-          <a href="/">Home</a>
-          &nbsp;|&nbsp;
-          <a href="/tags/linux">Linux</a>
-          &nbsp;|&nbsp;
-          <a href="/about">About</a>
-        </p>
-      </header>
-      <section>
-
-      </section>
-      <footer>&copy; Florin Lipan</footer>
-    </div>
-    <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
-    {% if site.google_analytics %}
+    <div id="map"></div>
     <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      var map = L.map('map')
+      map.setView([46.72, 12.61], 5)
 
-        ga('create', '{{ site.google_analytics }}', 'auto');
-        ga('send', 'pageview');
+      var layerUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+      var layerAttribution='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+      var layer = new L.TileLayer(layerUrl, {
+        minZoom: 5,
+        maxZoom: 12,
+        attribution: layerAttribution
+      }).addTo(map)
+
+      var places = [
+        ["Brasov", 45.657975, 25.601198],
+        ["Cluj", 46.771210, 23.623635],
+        ["Berlin", 52.520007, 13.404954],
+        ["Barcelona", 41.385064, 2.173403],
+        ["Paris", 48.856614, 2.352222],
+        ["Karlsruhe", 49.006890, 8.403653],
+        ["Heidelberg", 49.398752, 8.672434],
+        ["Monchengladbach", 51.180457, 6.442804],
+        ["Amsterdam", 52.370216, 4.895168],
+        ["Frankfurt", 50.110922, 8.682127],
+        ["Freiburg", 47.999008, 7.842104],
+        ["Strassbourg", 48.573405, 7.752111],
+        ["Colmar", 48.079359, 7.358512],
+        ["London", 51.507351, -0.127758],
+        ["Nice", 43.710173, 7.261953],
+      ]
+
+      places.forEach(function(place) {
+        L.marker([place[1], place[2]]).addTo(map);
+      });
+
     </script>
-    {% endif %}
   </body>
 </html>
