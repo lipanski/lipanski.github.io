@@ -38,7 +38,7 @@ The first part `key <AD01>` represents **the key** that we want to map. The code
 
 So `key <AD01>` would point to the *first key* (ignoring the `TAB`) of the *forth row* of the *alphanumeric block*, which on most keyboards is the letter `Q`.
 
-The second part, the array `[ q, Q, acircumflex, Acircumflex ]`, points to the character that will be printed out, for the various combinations with/without `Shift` and/or `AltGr`:
+The second part, `[ q, Q, acircumflex, Acircumflex ]`, points to the character that will be printed out, for the various combinations of `Shift` and `AltGr`:
 
 1. No combination: q
 2. `Shift`: Q
@@ -47,7 +47,7 @@ The second part, the array `[ q, Q, acircumflex, Acircumflex ]`, points to the c
 
 If don't intend to use the `Shift` and/or `AltGr` combinations, you can simply leave those positions out.
 
-Note that for representing the printed out value you can either use the entity name - like `q` for the letter *q* and `acircumflex` for the letter *â* - or the [Unicode control codes](https://en.wikipedia.org/wiki/List_of_Unicode_characters#Control_codes) - like `U00E5` for the letter *å*.
+Note that for representing the printed value you can either use the entity name - like `q` for the letter *q* and `acircumflex` for the letter *â* - or the [Unicode control codes](https://en.wikipedia.org/wiki/List_of_Unicode_characters#Control_codes) - like `U00E5` for the letter *å*.
 
 Based on these conventions, it's quite easy to either add new bindings or modify existing ones.
 
@@ -61,11 +61,11 @@ key <AD09> { [ o, O, odiaeresis, Odiaeresis ] };
 key <AD07> { [ u, U, udiaeresis, Udiaeresis ] };
 
 // Print ß when pressing z + AltGr
-// Note how there's no capital ß in the German language, so I've ignored the Shift + AltGr combination
+// Because there's no capital ß in the German language, I've left out the Shift + AltGr combination
 key <AB01> { [ z, Z, ssharp ] };
 ```
 
-I've also edited the binding for the letter *w*:
+I've also edited the existing binding for the letter *w*:
 
 ```
 // Print ä when pressing w + AltGr
@@ -78,8 +78,6 @@ Once you're done, you can already switch to your new layout by calling:
 setxkbmap fl
 ```
 
----
+## Sources:
 
-Sources:
-
-- https://askubuntu.com/questions/510024/what-are-the-steps-needed-to-create-new-keyboard-layout-on-ubuntu
+- [https://askubuntu.com/questions/510024/what-are-the-steps-needed-to-create-new-keyboard-layout-on-ubuntu](https://askubuntu.com/questions/510024/what-are-the-steps-needed-to-create-new-keyboard-layout-on-ubuntu)
