@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Upgrading Postgres and migrating your data to the new version"
+---
+
 ## Upgrading Postgres and migrating your data to the new version
 
 After upgrading your Postgres server to a newer version, your data will not be migrated automatically to the new installation.
