@@ -1,3 +1,4 @@
 theme: jekyll-theme-minimal
 title: Hello Florin
 description: Random things I tend to forget
+permalink: posts/:slug
