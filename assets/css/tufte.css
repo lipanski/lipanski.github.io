@@ -1,40 +1,11 @@
 @charset "UTF-8";
 
-/* Import ET Book styles
-   adapted from https://github.com/edwardtufte/et-book/blob/gh-pages/et-book.css */
-
-@font-face { font-family: "et-book";
-             src: url("et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot");
-             src: url("et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), url("et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff") format("woff"), url("et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf") format("truetype"), url("et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
-             font-weight: normal;
-             font-style: normal; }
-
-@font-face { font-family: "et-book";
-             src: url("et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot");
-             src: url("et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix") format("embedded-opentype"), url("et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff") format("woff"), url("et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf") format("truetype"), url("et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf") format("svg");
-             font-weight: normal;
-             font-style: italic; }
-
-@font-face { font-family: "et-book";
-             src: url("et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot");
-             src: url("et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), url("et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff") format("woff"), url("et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf") format("truetype"), url("et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf") format("svg");
-             font-weight: bold;
-             font-style: normal; }
-
-@font-face { font-family: "et-book-roman-old-style";
-             src: url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot");
-             src: url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix") format("embedded-opentype"), url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff") format("woff"), url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf") format("truetype"), url("et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf") format("svg");
-             font-weight: normal;
-             font-style: normal; }
-
 /* Tufte CSS styles */
 html { font-size: 15px; }
 
-body { width: 87.5%;
-       margin-left: auto;
+body { margin-left: auto;
        margin-right: auto;
-       padding-left: 12.5%;
-       font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+       font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
        background-color: #fffff8;
        color: #111;
        max-width: 1400px;
@@ -62,7 +33,6 @@ h3 { font-style: italic;
 
 hr { display: block;
      height: 1px;
-     width: 55%;
      border: 0;
      border-top: 1px solid #ccc;
      margin: 1em 0;
@@ -74,8 +44,6 @@ p.subtitle { font-style: italic;
              font-size: 1.8rem;
              display: block;
              line-height: 1; }
-
-.numeral { font-family: et-book-roman-old-style; }
 
 .danger { color: red; }
 
@@ -108,14 +76,14 @@ div.epigraph > blockquote > footer > cite { font-style: italic; }
 
 blockquote { font-size: 1.4rem; }
 
-blockquote p { width: 55%;
+blockquote p {1
                margin-right: 40px; }
 
-blockquote footer { width: 55%;
+blockquote footer {1
                     font-size: 1.1rem;
                     text-align: right; }
 
-section > p, section > footer, section > table { width: 55%; }
+section > p, section > footer, section > table {1 }
 
 /* 50 + 5 == 55, to be the same width as paragraph */
 section > ol, section > ul { width: 50%;
@@ -128,7 +96,6 @@ figure { padding: 0;
          font-size: 100%;
          font: inherit;
          vertical-align: baseline;
-         max-width: 55%;
          -webkit-margin-start: 0;
          -webkit-margin-end: 0;
          margin: 0 0 3em 0; }
@@ -182,8 +149,7 @@ img { max-width: 100%; }
 
 .sidenote-number { counter-increment: sidenote-counter; }
 
-.sidenote-number:after, .sidenote:before { font-family: et-book-roman-old-style;
-                                           position: relative;
+.sidenote-number:after, .sidenote:before { position: relative;
                                            vertical-align: baseline; }
 
 .sidenote-number:after { content: counter(sidenote-counter);
@@ -245,31 +211,3 @@ label.margin-toggle:not(.sidenote-number) { display: none; }
                          left: 0;
                          width: 100%;
                          height: 100%; }
-
-@media (max-width: 760px) { body { width: 84%;
-                                   padding-left: 8%;
-                                   padding-right: 8%; }
-                            section > p, section > footer, section > table { width: 100%; }
-                            pre.code { width: 97%; }
-                            section > ol { width: 90%; }
-                            section > ul { width: 90%; }
-                            figure { max-width: 90%; }
-                            figcaption, figure.fullwidth figcaption { margin-right: 0%;
-                                                                      max-width: none; }
-                            blockquote { margin-left: 1.5em;
-                                         margin-right: 0em; }
-                            blockquote p, blockquote footer { width: 100%; }
-                            label.margin-toggle:not(.sidenote-number) { display: inline; }
-                            .sidenote, .marginnote { display: none; }
-                            .margin-toggle:checked + .sidenote,
-                            .margin-toggle:checked + .marginnote { display: block;
-                                                                   float: left;
-                                                                   left: 1rem;
-                                                                   clear: both;
-                                                                   width: 95%;
-                                                                   margin: 1rem 2.5%;
-                                                                   vertical-align: baseline;
-                                                                   position: relative; }
-                            label { cursor: pointer; }
-                            div.table-wrapper, table { width: 85%; }
-                            img { width: 100%; } }
