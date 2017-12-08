@@ -1,6 +1,6 @@
 ## About
 
-Hello! I'm Florin and this page is dedicated to the random things I tend to forget.
+Hello! I'm Florin and this is where I write things, mostly technical.
 
 [GitHub](https://github.com/lipanski/)
 |
