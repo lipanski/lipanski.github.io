@@ -4,7 +4,7 @@ title: "Linux: How to change the file encoding from the command line"
 tags: linux
 ---
 
-## Linux: How to change the file encoding from the command line
+## {{ page.title }}
 
 Let's say you have a file encoded as ISO-8859-16 and would like to turn it into UTF-8.
 

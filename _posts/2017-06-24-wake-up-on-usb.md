@@ -4,7 +4,7 @@ title: "Linux: How to wake up from stand-by on USB input"
 tags: linux
 ---
 
-## Linux: How to wake up from stand-by on USB input
+## {{ page.title }}
 
 Use the `lsusb` command to figure out the vendor and product ID of the USB device you are interested in:
 
