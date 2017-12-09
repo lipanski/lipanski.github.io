@@ -61,6 +61,9 @@ p { margin-top: 1.4rem;
     padding-right: 0;
     vertical-align: baseline; }
 
+ul { margin-top: 1.4rem;
+     margin-bottom: 1.4rem; }
+
 /* Chapter Epigraphs */
 div.epigraph { margin: 5em 0; }
 
@@ -84,10 +87,6 @@ blockquote footer {1
                     text-align: right; }
 
 section > p, section > footer, section > table {1 }
-
-/* 50 + 5 == 55, to be the same width as paragraph */
-section > ol, section > ul { width: 50%;
-                             -webkit-padding-start: 5%; }
 
 li:not(:first-child) { margin-top: 0.25rem; }
 
