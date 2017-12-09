@@ -8,4 +8,4 @@ Hello! I'm Florin and this is where I write things, mostly technical.
 |
 [LinkedIn](https://www.linkedin.com/in/florinlipan/)
 |
-[A map of all the places I've seen](/map)
+[I like maps](/map)
