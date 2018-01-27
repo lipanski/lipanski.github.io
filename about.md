@@ -10,4 +10,6 @@ I'm interested and work with Ruby, Rust, Crystal and devops related stuff.
 |
 [LinkedIn](https://www.linkedin.com/in/florinlipan/)
 |
+[Email](mailto:florinlipan@gmail.com)
+|
 [Feed](/feed.xml)
