@@ -1,3 +1,13 @@
+alias MyType = String | Time | Nil
+
+Use sentry.
+
+---
+
+Use the shard environment variable.
+
+---
+
 Compare slices:
 
 ```crystal
