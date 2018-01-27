@@ -2,6 +2,7 @@
 layout: default
 title: Compiling and using dynamic nginx modules (ipset blacklist)
 tags: devops
+comments: true
 ---
 
 ## {{ page.title }}

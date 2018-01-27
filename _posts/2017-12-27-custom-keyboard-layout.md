@@ -2,6 +2,7 @@
 layout: default
 title: "Linux: How to make your own keyboard layout"
 tags: linux
+comments: true
 ---
 
 ## {{ page.title }}

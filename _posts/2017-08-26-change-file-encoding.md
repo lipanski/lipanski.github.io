@@ -2,6 +2,7 @@
 layout: default
 title: "Linux: How to change the file encoding from the command line"
 tags: linux
+comments: true
 ---
 
 ## {{ page.title }}

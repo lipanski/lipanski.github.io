@@ -2,6 +2,7 @@
 layout: default
 title: "Linux: How to wake up from stand-by on USB input"
 tags: linux
+comments: true
 ---
 
 ## {{ page.title }}

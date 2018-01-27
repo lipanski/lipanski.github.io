@@ -2,6 +2,7 @@
 layout: default
 title: "Blocking malicious requests with nginx + ModSecurity"
 tags: devops
+comments: true
 ---
 
 ## {{ page.title }}
