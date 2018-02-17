@@ -196,6 +196,7 @@ puts a, b, c
 ### Links
 
 * [Concurrency in Crystal](https://crystal-lang.org/docs/guides/concurrency.html)
+* [The parallel macro implementation](https://github.com/crystal-lang/crystal/blob/v0.24.1/src/concurrent.cr#L131)
 * [Uninitialized variables in Crystal](https://crystal-lang.org/docs/syntax_and_semantics/declare_var.html)
 * [Issue explaining invalid memory access](https://github.com/crystal-lang/crystal/issues/4544)
 * [Crystal 0.7.0 release notes, which introduced the %var macro notation](https://github.com/crystal-lang/crystal/releases/tag/0.7.0)
