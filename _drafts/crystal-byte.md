@@ -53,3 +53,9 @@ rescue e : Exception
   puts e.message
 end
 ```
+
+Unique variables in macros - see https://github.com/crystal-lang/crystal/releases/tag/0.7.0
+
+```crysal
+%var = 1
+```
