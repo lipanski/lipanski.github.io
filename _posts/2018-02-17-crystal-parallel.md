@@ -193,6 +193,8 @@ a, b, c =
 puts a, b, c
 ```
 
+**UPDATE:** I openend a [PR](https://github.com/crystal-lang/crystal/pull/5726) to propose my changes to Crystal.
+
 ### Links
 
 * [Concurrency in Crystal](https://crystal-lang.org/docs/guides/concurrency.html)
