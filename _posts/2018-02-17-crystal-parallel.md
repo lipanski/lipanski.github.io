@@ -7,6 +7,8 @@ comments: true
 
 ## {{ page.title }}
 
+**UPDATE:** My patch to the original `parallel` macro made it into [Crystal 0.25.0](https://github.com/crystal-lang/crystal/releases/tag/0.25.0), which also provides [proper documentation](https://crystal-lang.org/api/0.25.0/toplevel.html#parallel%28%2Ajobs%29-macro) for this quite useful language feature.
+
 Concurrency can be achieved in Crystal by using *Fibers*. Communication between *Fibers* is handled via *Channels*. The [documentation](https://crystal-lang.org/docs/guides/concurrency.html) on these topics is quite comprehensive so I won't go into detail here.
 
 This post will focus on the `parallel` macro, present one of its drawbacks when dealing with unhandled exceptions and introduce a solution: the `parallel!` macro.
