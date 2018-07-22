@@ -4,7 +4,7 @@ Use sentry.
 
 ---
 
-Use the shard environment variable.
+Use the shard environment variable for shards.
 
 ---
 
@@ -59,3 +59,81 @@ Unique variables in macros - see https://github.com/crystal-lang/crystal/release
 ```crysal
 %var = 1
 ```
+
+---
+
+case/when with instance method calls:
+
+```crystal
+case kind
+when .scalar?
+  read_anchor @event.data.scalar.anchor
+when .sequence_start?
+  read_anchor @event.data.sequence_start.anchor
+when .mapping_start?
+  read_anchor @event.data.mapping_start.anchor
+when .alias?
+  read_anchor @event.data.alias.anchor
+else
+  nil
+end
+```
+
+---
+
+Class as a restriction
+
+- see https://crystal-lang.org/docs/syntax_and_semantics/type_restrictions.html
+
+```crystal
+def something : Array(MyClass.class)
+end
+```
+
+---
+
+Private shards in shards.yml:
+
+```
+git: git@github.com:user/repo.git
+```
+
+...instead of `github: user/repo` - otherwise you get `https://`.
+
+---
+
+No garbage collection:
+
+```crystal
+require "lib_c"
+require "lib_c/i686-linux-gnu/c/stdlib"
+require "lib_c/i686-linux-gnu/c/stdio"
+
+def free(object)
+  LibC.free(pointerof(object))
+end
+
+class String
+  def to_unsafe
+    pointerof(@c)
+  end
+end
+
+class Foo
+  def bar
+    LibC.printf "Hello, World!\n"
+  end
+end
+
+f = Foo.new
+f.bar
+free(f)
+```
+
+Compile with:
+
+```sh
+crystal build app.cr --prelude="empty" -p --release --no-debug
+```
+
+Source: <https://perens.com/2018/07/06/tiny-crystal-language-programs/>
