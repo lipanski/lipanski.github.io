@@ -79,7 +79,24 @@ I've also edited the existing binding for the letter *w*:
 key <AD02> { [ w, W,  adiaeresis, Adiaeresis ] };
 ```
 
-Once you're done, you can switch to your new layout by calling:
+One more thing before we're done: Ubuntu keeps track of the installed keyboards in a file called `/usr/share/X11/xkb/rules/evdev.xml`. Open it with your favourite editor and, after the last `</layout>` tag, add your new layout:
+
+```xml
+<layout>
+  <configItem>
+    <name>fl</name>
+    <shortDescription>fl</shortDescription>
+    <description>My very own keyboard layout</description>
+    <languageList>
+      <iso639Id>rum</iso639Id>
+      <iso639Id>ger</iso639Id>
+      <iso639Id>eng</iso639Id>
+    </languageList>
+  </configItem>
+</layout>
+```
+
+That's it - you can switch to your new layout by calling:
 
 ```sh
 setxkbmap fl
