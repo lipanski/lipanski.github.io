@@ -1,11 +1,11 @@
 @charset "UTF-8";
 
 /* Tufte CSS styles */
-html { font-size: 15px; }
+html { font-size: 17px; }
 
 body { margin-left: auto;
        margin-right: auto;
-       font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+       font-family: 'EB Garamond', Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
        background-color: #fffff8;
        color: #111;
        max-width: 1400px;
