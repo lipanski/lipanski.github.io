@@ -1,9 +1,5 @@
 ## About
 
-Hello! I'm Florin and this is where I write things, mostly technical.
-
-I'm interested and work with Ruby, Rust, Crystal and devops related stuff.
-
 [GitHub](https://github.com/lipanski/)
 |
 [Twitter](https://twitter.com/helloflorin)
@@ -12,4 +8,19 @@ I'm interested and work with Ruby, Rust, Crystal and devops related stuff.
 |
 [Email](mailto:florinlipan@gmail.com)
 |
-[Feed](/feed.xml)
+[RSS](/feed.xml)
+
+Hello! I'm Florin and this is where I write things.
+
+I'm interested and work with Ruby, Rust, Crystal and devopsy things.
+
+---
+
+Here are some of my personal projects:
+
+- [lipanski/mockito](https://github.com/lipanski/mockito): An HTTP mocking library for Rust with an awesome logo
+- [lipanski/keepass](https://github.com/lipanski/keepass): A Keepass KDBX v2/v3 parser for Crystal
+- [lipanski/datadog-sidekiq](https://github.com/lipanski/datadog-sidekiq): A Rust app to track Sidekiq enqueued & processed jobs in DataDog
+- [lipanski/slow-down](https://github.com/lipanski/slow-down): A centralized Redis-based lock to help you wait on throttled resources
+- <http://nume.ottomotor.ro>: A map of the most recurring Romanian family names
+
