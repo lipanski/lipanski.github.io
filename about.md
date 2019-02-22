@@ -1,16 +1,16 @@
 ## About
 
 [GitHub](https://github.com/lipanski/)
-|
+&middot;
 [Twitter](https://twitter.com/helloflorin)
-|
+&middot;
 [LinkedIn](https://www.linkedin.com/in/florinlipan/)
-|
+&middot;
 [Email](mailto:florinlipan@gmail.com)
-|
+&middot;
 [RSS](/feed.xml)
 
-Hello! I'm Florin and this is where I write things.
+Hello! I'm Florin and this is where I write.
 
 I'm interested and work with Ruby, Rust, Crystal and devopsy things.
 
