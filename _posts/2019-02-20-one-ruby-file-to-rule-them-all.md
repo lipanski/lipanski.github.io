@@ -100,6 +100,44 @@ migrations_to_roll_back = [CreateEventTableMigration, AddEventCreatedMigration]
 ActiveRecord::Migrator.new(:down, migrations_to_roll_back).migrate
 ```
 
+### Alternative: Inline ActiveRecord schema loading
+
+As pointed out by Janko Marohnić in the comments, an alternative to the previously described database migration process would be to perform a schema loading, similar to what ActiveRecord does when you call `rake db:schema:load`. The result looks simpler:
+
+```ruby
+ActiveRecord::Schema.define do
+  create_table :events do |t|
+    t.string :name
+  end
+
+  change_table :events do |t|
+    t.datetime :created_at
+  end
+end
+```
+
+...but there's catch: **the code is not idempotent** and will fail when run a second time.
+
+Fortunately ActiveRecord does provide us with [the means](https://apidock.com/rails/v4.2.7/ActiveRecord/ConnectionAdapters/SchemaStatements/column_exists%3F) to make this idempotent. You'll only need to be a bit more explicit:
+
+```ruby
+ActiveRecord::Schema.define do
+  unless table_exists?(:events)
+    create_table :events do |t|
+      t.string :name
+    end
+  end
+
+  unless column_exists?(:events, :created_at)
+    change_table :events do |t|
+      t.datetime :created_at
+    end
+  end
+end
+```
+
+In this case, I'm using the `table_exists?` and `column_exists?` methods to avoid running my migrations a second time. Note that I've also preserved the incremental nature of my migrations - new migrations can be added to the `#define` block without interfering with the old ones.
+
 ### Inline everything!
 
 Here's how the final result looks like:
@@ -193,3 +231,4 @@ When executed, the script will:
 - <https://bundler.io/v2.0/guides/bundler_in_a_single_file_ruby_script.html>
 - <https://github.com/bundler/bundler/blob/master/lib/bundler/inline.rb>
 - <https://github.com/rails/rails/blob/master/activerecord/lib/active_record/tasks/database_tasks.rb>
+- <https://apidock.com/rails/v4.2.7/ActiveRecord/ConnectionAdapters/SchemaStatements/column_exists%3F>
