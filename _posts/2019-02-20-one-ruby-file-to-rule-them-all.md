@@ -116,7 +116,7 @@ ActiveRecord::Schema.define do
 end
 ```
 
-...but there's catch: **the code is not idempotent** and will fail when run a second time.
+...but there's a catch: **the code is not idempotent** and will fail when run a second time.
 
 Fortunately ActiveRecord does provide us with [the means](https://apidock.com/rails/v4.2.7/ActiveRecord/ConnectionAdapters/SchemaStatements/column_exists%3F) to make this idempotent. You'll only need to be a bit more explicit:
 
