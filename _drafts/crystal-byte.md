@@ -137,3 +137,21 @@ crystal build app.cr --prelude="empty" -p --release --no-debug
 ```
 
 Source: <https://perens.com/2018/07/06/tiny-crystal-language-programs/>
+
+---
+
+Embed file inside binary macro:
+
+```crystal
+CONFIG = Config.from_yaml({{ read_file("config.yml") }})
+```
+
+---
+
+Use Kemal error:
+
+```crystal
+error 500 do |env, error|
+  error.message
+end
+```
