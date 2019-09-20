@@ -263,6 +263,8 @@ Secrets should never appear inside your *Dockerfile* in plain text. Instead, the
 - Environment variables: the `-e` or `--env-file` Docker arguments.
 - Kubernetes secrets or similar methods.
 
+**Note:** Whenever you use one of these `docker build` arguments, be it `--build-arg` or `-e`, the full command (including the secret values) will show up in your `docker history`. Depending on the environment where the build happens, you might want to avoid this. A solution to this problem is detailed in step 14.
+
 ### 10. Always clean up injected secrets within the same build step
 
 Bad:
@@ -286,7 +288,7 @@ Good:
 ```dockerfile
 FROM ruby:2.5.5
 
-ARG GITHUB_TOKEN
+ARG PRIVATE_SSH_KEY
 
 RUN echo "${PRIVATE_SSH_KEY}" > /root/.ssh/id_rsa && \
   bundle install && \
@@ -436,6 +438,113 @@ nokogiri-multi    70.1MB
 
 As you can see, the difference can be quite signficant...
 
+### 14. Use multi-stage builds to avoid leaking secrets inside your docker history
+
+Bad:
+
+```dockerfile
+FROM ruby:2.5.5-alpine
+
+# This is a secret
+ARG PRIVATE_SSH_KEY
+
+# Just a basic Gemfile to make bundle install happy
+RUN echo 'source "https://rubygems.org"; gem "sinatra"' > Gemfile
+
+# We require the secret for installing dependencies
+RUN mkdir -p /root/.ssh/ && \
+  echo "${PRIVATE_SSH_KEY}" > /root/.ssh/id_rsa && \
+  bundle install && \
+  rm /root/.ssh/id_rsa
+
+CMD ruby -e "puts 1 + 2"
+```
+
+Good:
+
+```dockerfile
+FROM ruby:2.5.5-alpine AS builder
+
+# This is a secret
+ARG PRIVATE_SSH_KEY
+
+# Just a basic Gemfile to make bundle install happy
+RUN echo 'source "https://rubygems.org"; gem "sinatra"' > Gemfile
+
+# We require the secret for installing dependencies
+RUN mkdir -p /root/.ssh/ && \
+  echo "${PRIVATE_SSH_KEY}" > /root/.ssh/id_rsa && \
+  bundle install && \
+  rm /root/.ssh/id_rsa
+
+# The final image doesn't need the secret
+FROM ruby:2.5.5-alpine
+
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+
+CMD ruby -e "puts 1 + 2"
+```
+
+You can build both examples by passing the `PRIVATE_SSH_KEY` as a build argument:
+
+```sh
+docker build -t my-fancy-image --build-arg PRIVATE_SSH_KEY=xxx .
+```
+
+As explained in step 9, you can use *Docker build arguments* to avoid leaking secrets inside your image. By default, however, this will still leak the secret inside your *Docker history*. Depending on your build environment, you might want to avoid this.
+
+Let's see what this means for our bad example:
+
+```sh
+# Lines 3-4 contain your secret PRIVATE_SSH_KEY in clear text
+
+> docker history my-fancy-image
+IMAGE               CREATED              CREATED BY                                      SIZE                COMMENT
+67e60c0853ab        19 seconds ago       /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "ruby…   0B
+94dd778c4b5d        20 seconds ago       |1 PRIVATE_SSH_KEY=xxx /bin/sh -c mkdir -p /…   30.9MB
+32a993af7bfb        About a minute ago   |1 PRIVATE_SSH_KEY=xxx /bin/sh -c echo 'sour…   45B
+2be964ad91c7        About a minute ago   /bin/sh -c #(nop)  ARG PRIVATE_SSH_KEY          0B
+44723f3ab2bd        4 months ago         /bin/sh -c #(nop)  CMD ["irb"]                  0B
+<missing>           4 months ago         /bin/sh -c mkdir -p "$GEM_HOME" && chmod 777…   0B
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV PATH=/usr/local/bundl…   0B
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV BUNDLE_PATH=/usr/loca…   0B
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV GEM_HOME=/usr/local/b…   0B
+<missing>           4 months ago         /bin/sh -c set -ex   && apk add --no-cache -…   45.5MB
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV RUBYGEMS_VERSION=3.0.3   0B
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV RUBY_DOWNLOAD_SHA256=…   0B
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV RUBY_VERSION=2.5.5       0B
+<missing>           4 months ago         /bin/sh -c #(nop)  ENV RUBY_MAJOR=2.5           0B
+<missing>           4 months ago         /bin/sh -c mkdir -p /usr/local/etc  && {   e…   45B
+<missing>           4 months ago         /bin/sh -c apk add --no-cache   gmp-dev         3.4MB
+<missing>           4 months ago         /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+<missing>           4 months ago         /bin/sh -c #(nop) ADD file:a86aea1f3a7d68f6a…   5.53MB
+```
+
+Now let's see what happens with the multi-stage build:
+
+```sh
+> docker history my-fancy-image
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+2706a2f47816        8 seconds ago       /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "ruby…   0B
+86509dba3bd9        9 seconds ago       /bin/sh -c #(nop) COPY dir:e110956912ddb292a…   3.16MB
+44723f3ab2bd        4 months ago        /bin/sh -c #(nop)  CMD ["irb"]                  0B
+<missing>           4 months ago        /bin/sh -c mkdir -p "$GEM_HOME" && chmod 777…   0B
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV PATH=/usr/local/bundl…   0B
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV BUNDLE_PATH=/usr/loca…   0B
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV GEM_HOME=/usr/local/b…   0B
+<missing>           4 months ago        /bin/sh -c set -ex   && apk add --no-cache -…   45.5MB
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV RUBYGEMS_VERSION=3.0.3   0B
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV RUBY_DOWNLOAD_SHA256=…   0B
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV RUBY_VERSION=2.5.5       0B
+<missing>           4 months ago        /bin/sh -c #(nop)  ENV RUBY_MAJOR=2.5           0B
+<missing>           4 months ago        /bin/sh -c mkdir -p /usr/local/etc  && {   e…   45B
+<missing>           4 months ago        /bin/sh -c apk add --no-cache   gmp-dev         3.4MB
+<missing>           4 months ago        /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+<missing>           4 months ago        /bin/sh -c #(nop) ADD file:a86aea1f3a7d68f6a…   5.53MB
+```
+
+The multi-stage build only retains the history of the final image. The builder history is ignored and thus your secret is safe.
+
 ### Putting it all together...
 
 Enough with the theory! Let's apply all these best practices on a sample Ruby application.
@@ -535,10 +644,12 @@ Last but not least, here's our final *Dockerfile* which applies all the best pra
 # 2. Use only trusted or official base images
 # 12. Minimize image size by opting for small base images when possible
 # 13. Use multi-stage builds to reduce the size of your image
+# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
 FROM ruby:2.5.5-alpine AS builder
 
 # 9. Avoid leaking secrets inside your image
 # 11. Fetching private dependencies via a Github token injected through the gitconfig
+# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
 ARG GITHUB_TOKEN
 
 # 5. Group commands by how likely they are to change individually
@@ -554,6 +665,7 @@ COPY Gemfile Gemfile.lock ./
 
 # 10. Always clean up injected secrets within the same build step
 # 11. Fetching private dependencies via a Github token injected through the gitconfig
+# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
 RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf git@github.com:some-user && \
   git config --global --add url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf ssh://git@github && \
   bundle install && \
@@ -562,6 +674,8 @@ RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/so
 # 1. Pin your base image version
 # 2. Use only trusted or official base images
 # 12. Minimize image size by opting for small base images when possible
+# 13. Use multi-stage builds to reduce the size of your image
+# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
 FROM ruby:2.5.5-alpine
 
 # 13. Use multi-stage builds to reduce the size of your image
@@ -584,7 +698,7 @@ You can build this image by running:
 docker build --build-arg GITHUB_TOKEN=xxx -t my-docker-image:v1 .
 ```
 
-If your application doesn't require private gems, feel free to reduce all the lines injecting the `GITHUB_TOKEN` to the much simpler `RUN bundle install` command.
+If your application doesn't require private gems, you can reduce all the lines injecting the `GITHUB_TOKEN` to the much simpler `RUN bundle install` command.
 
 The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>.
 
