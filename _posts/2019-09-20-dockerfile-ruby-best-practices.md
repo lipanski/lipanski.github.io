@@ -136,6 +136,7 @@ FROM ruby:2.5.5
 COPY my-code/ /srv/
 
 # Application dependencies
+COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 # Operating system dependencies
@@ -153,6 +154,7 @@ RUN apt update && \
   apt install -y mysql-client postgresql-client nginx
 
 # Application dependencies
+COPY Gemfile Gemfile.lock ./
 RUN bundle install
 
 # Source code
