@@ -592,7 +592,7 @@ root         6  0.8  0.2  43948 25556 pts/0    Sl+  14:36   0:00 /usr/local/bund
 root        13  0.0  0.0   7640  2588 ?        Rs   14:37   0:00 ps aux
 ```
 
-Our `bundle exec rackup` command is wrapped inside a `/bin/sh` call. The actual `rackup` call is not the PID 1 process. Sending a HUP signal to our container will not get propagated to the actual `rackup` process and will not print out `HUUUUUP`.
+Our `bundle exec rackup` command is wrapped inside a `/bin/sh` call. The actual `rackup` call is not the PID 1 process. Sending a HUP signal to our container **will not get propagated** to the actual `rackup` process and will not print out `HUUUUUP`.
 
 Now let's see how the process tree looks like for the container run in **exec format** (the good example):
 
@@ -605,7 +605,7 @@ root         8  0.0  0.0   7640  2668 ?        Rs   14:47   0:00 ps aux
 
 As you can see, the `rackup` process is not wrapped inside `/bin/sh` and is running as PID 1. Sending a HUP signal to our container will correctly print out `HUUUUUP`.
 
-Why is this important? Some applications implement signals in order to exit gracefully or clean up resources. In the case of web servers, this usually means releasing connections from the database connection pool or finishing requests.
+Why is this important? Some applications implement signals in order to exit gracefully or clean up resources. In the case of web servers, this usually means releasing connections from the database connection pool or finishing requests. If you want any of these you should care about signals.
 
 Thanks to [Kamil Grabowski](https://twitter.com/_y3ti) for pointing this out on Twitter.
 
