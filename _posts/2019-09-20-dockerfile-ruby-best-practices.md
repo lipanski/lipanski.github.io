@@ -545,6 +545,70 @@ IMAGE               CREATED             CREATED BY                              
 
 The multi-stage build only retains the history of the final image. The builder history is ignored and thus your secret is safe.
 
+### 15. When setting the CMD instruction, prefer the exec format over the shell format
+
+Bad:
+
+```dockerfile
+FROM ruby:2.5.5
+
+RUN echo 'source "https://rubygems.org"; gem "sinatra"' > Gemfile
+RUN bundle install
+
+# A simple Sinatra app which prints out HUUUUUP when the process receives the HUP signal.
+RUN echo 'require "sinatra"; set bind: "0.0.0.0"; Signal.trap("HUP") { puts "HUUUUUP" }; run Sinatra::Application.run!' > config.ru
+
+CMD bundle exec rackup
+```
+
+Good:
+
+```dockerfile
+FROM ruby:2.5.5
+
+RUN echo 'source "https://rubygems.org"; gem "sinatra"' > Gemfile
+RUN bundle install
+
+# A simple Sinatra app which prints out HUUUUUP when the process receives the HUP signal.
+RUN echo 'require "sinatra"; set bind: "0.0.0.0"; Signal.trap("HUP") { puts "HUUUUUP" }; run Sinatra::Application.run!' > config.ru
+
+CMD ["bundle", "exec", "rackup"]
+```
+
+There are two ways of using `CMD`, as explained [here](https://docs.docker.com/engine/reference/builder/#cmd):
+
+- The *shell format*, which invokes the command from within a shell - e.g. `CMD bundle exec rackup`
+- The *exec format*, which doesn't invoke a command shell and takes the form of a JSON array - e.g. `CMD ["bundle", "exec", "rackup"]`
+
+The recommended way of using `CMD` is in *exec format*. This ensures your process will run as PID 1 which in turn ensures that any received signals will also be handled properly.
+
+Let's see how the process tree looks like for the container run in **shell format** (the bad example):
+
+```sh
+> docker exec $(docker ps -q) ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.7  0.0   2388   756 pts/0    Ss+  14:36   0:00 /bin/sh -c bundle exec rackup
+root         6  0.8  0.2  43948 25556 pts/0    Sl+  14:36   0:00 /usr/local/bundle/bin/rackup
+root        13  0.0  0.0   7640  2588 ?        Rs   14:37   0:00 ps aux
+```
+
+Our `bundle exec rackup` command is wrapped inside a `/bin/sh` call. The actual `rackup` call is not the PID 1 process. Sending a HUP signal to our container will not get propagated to the actual `rackup` process and will not print out `HUUUUUP`.
+
+Now let's see how the process tree looks like for the container run in **exec format** (the good example):
+
+```sh
+> docker exec $(docker ps -q) ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1 29.0  0.2  43988 25632 pts/0    Ssl+ 14:47   0:00 /usr/local/bundle/bin/rackup
+root         8  0.0  0.0   7640  2668 ?        Rs   14:47   0:00 ps aux
+```
+
+As you can see, the `rackup` process is not wrapped inside `/bin/sh` and is running as PID 1. Sending a HUP signal to our container will correctly print out `HUUUUUP`.
+
+Why is this important? Some applications implement signals in order to exit gracefully or clean up resources. In the case of web servers, this usually means releasing connections from the database connection pool or finishing requests.
+
+Thanks to [Kamil Grabowski](https://twitter.com/_y3ti) for pointing this out on Twitter.
+
 ### Putting it all together...
 
 Enough with the theory! Let's apply all these best practices on a sample Ruby application.
@@ -689,7 +753,8 @@ WORKDIR /home/myuser
 # 8. When running COPY or ADD (as a different user) use --chown
 COPY --chown=myuser . ./
 
-CMD bundle exec rackup
+# 15. When setting the CMD instruction, prefer the exec format over the shell format
+CMD ["bundle", "exec", "rackup"]
 ```
 
 You can build this image by running:
@@ -709,3 +774,4 @@ The code presented here can also be found on Github: <https://github.com/lipansk
 - <https://vsupalov.com/build-docker-image-clone-private-repo-ssh-key/>
 - <https://evilmartians.com/chronicles/ruby-on-whales-docker-for-ruby-rails-development>
 - <https://pythonspeed.com/articles/docker-caching-model/>
+- <https://gmaslowski.com/docker-shell-vs-exec/>
