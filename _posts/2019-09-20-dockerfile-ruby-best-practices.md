@@ -609,6 +609,54 @@ Why is this important? Some applications implement signals in order to exit grac
 
 Thanks to [Kamil Grabowski](https://twitter.com/_y3ti) for pointing this out on Twitter.
 
+### 16. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
+
+In many cases, your test, development and production build processes might slightly differ from each other. If you're using Docker across all these environments, a common approach is to introduce one `Dockerfile` per environment. Keeping these files in sync can gradually become redundant, tedious or just easy to forget.
+
+A different approach to having multiple Dockerfiles is using multi-stage builds to map all your environments or build processes within the same Dockerfile. Here's an example:
+
+```dockerfile
+FROM ruby:2.5.5-alpine AS builder
+
+# A Gemfile that contains a test dependency (minitest)
+RUN echo 'source "https://rubygems.org"; gem "sinatra"; group(:test) { gem "minitest" }' > Gemfile
+RUN echo 'require "sinatra"; run Sinatra::Application.run!' > config.ru
+
+# By default we don't install development or test dependencies
+RUN bundle install --without development test
+
+# A separate build stage installs test dependencies and runs your tests
+FROM builder AS test
+# The test stage installs the test dependencies
+RUN bundle install --with test
+# Let's introduce a test that passes
+RUN echo 'require "minitest/spec"; require "minitest/autorun"; class TestIndex < MiniTest::Test; def test_it_passes; assert(true); end; end' > test.rb
+# The actual test run
+RUN bundle exec ruby test.rb
+
+# The production artifact doesn't contain any test dependencies
+FROM ruby:2.5.5-alpine
+
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+COPY --from=builder /config.ru ./
+
+CMD ["rackup"]
+```
+
+You can build the production artifact (without the test dependencies) by calling:
+
+```sh
+DOCKER_BUILDKIT=1 docker build .
+```
+
+You can run your tests by explicitly asking for the *test* stage:
+
+```sh
+DOCKER_BUILDKIT=1 docker build --target=test .
+```
+
+Notice the usage of the [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) feature flag. Prior to Docker 18.09 or without adding the `DOCKER_BUILDKIT=1` flag, a full build would still build all stages, including the test stage. The final artifact would still contain only the production dependencies but the build would take a little bit longer.
+
 ### Putting it all together...
 
 Enough with the theory! Let's apply all these best practices on a sample Ruby application.
@@ -732,8 +780,15 @@ COPY Gemfile Gemfile.lock ./
 # 14. Use multi-stage builds to avoid leaking secrets inside your docker history
 RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf git@github.com:some-user && \
   git config --global --add url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf ssh://git@github && \
-  bundle install && \
+  bundle install --without development test && \
   rm ~/.gitconfig
+
+# 16. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
+# Note that this is a little bit naive for better readability. You might want to copy the source code prior to this stage.
+FROM builder AS test
+RUN bundle install --with test
+COPY test.rb ./
+RUN bundle exec ruby test.rb
 
 # 1. Pin your base image version
 # 2. Use only trusted or official base images
@@ -760,7 +815,13 @@ CMD ["bundle", "exec", "rackup"]
 You can build this image by running:
 
 ```sh
-docker build --build-arg GITHUB_TOKEN=xxx -t my-docker-image:v1 .
+DOCKER_BUILDKIT=1 docker build --build-arg GITHUB_TOKEN=xxx -t my-docker-image:v1 .
+```
+
+...or you can run tests by calling:
+
+```sh
+DOCKER_BUILDKIT=1 docker build --build-arg GITHUB_TOKEN=xxx --target=test .
 ```
 
 If your application doesn't require private gems, you can reduce all the lines injecting the `GITHUB_TOKEN` to the much simpler `RUN bundle install` command.
@@ -775,3 +836,4 @@ The code presented here can also be found on Github: <https://github.com/lipansk
 - <https://evilmartians.com/chronicles/ruby-on-whales-docker-for-ruby-rails-development>
 - <https://pythonspeed.com/articles/docker-caching-model/>
 - <https://gmaslowski.com/docker-shell-vs-exec/>
+- <https://medium.com/capital-one-tech/multi-stage-builds-and-dockerfile-b5866d9e2f84>
