@@ -783,6 +783,13 @@ RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/so
   bundle install --without development test && \
   rm ~/.gitconfig
 
+# 16. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
+# Note that this is a little bit naive for better readability. You might want to copy the source code prior to this stage.
+FROM builder AS test
+RUN bundle install --with test
+COPY test.rb ./
+RUN bundle exec ruby test.rb
+
 # 1. Pin your base image version
 # 2. Use only trusted or official base images
 # 12. Minimize image size by opting for small base images when possible
