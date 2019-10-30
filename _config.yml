@@ -1,7 +1,7 @@
 theme: jekyll-theme-minimal
 title: Hello Florin
 description: Random technicalities
-url: https://lipanski.github.io
+url: https://lipanski.com
 permalink: posts/:slug
 google_analytics: UA-111647435-1
 plugins:
