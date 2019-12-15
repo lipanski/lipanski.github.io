@@ -7,6 +7,8 @@ comments: true
 
 ## {{ page.title }}
 
+**Update:** You can find the slides from the RUG:B meetup [here](/slides/dockerfile/index.html).
+
 The simplicity of the *Dockerfile* format is probably one of the reasons why Docker managed to become so popular in the first place. Getting something working is fairly easy. Producing a clean, small, secure image that will not leak secrets might not be as straight-forward though.
 
 This post will try to share some best practices when writing a *Dockerfile* for a Ruby application. Most of these suggestions should be valid for any other runtime as well.
