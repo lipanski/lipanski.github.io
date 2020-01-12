@@ -4,8 +4,13 @@
 @import "{{ site.theme }}";
 
 header, footer {
-  text-align:center;
+  text-align: center;
   padding: 0;
+}
+
+header a {
+  text-decoration: none;
+  background: none !important;
 }
 
 section {
@@ -24,9 +29,7 @@ section {
   }
 
   section {
-    border:1px solid #e5e5e5;
-    border-width:1px 0;
-    margin:0 0 20px;
+    border-bottom:1px solid #e5e5e5;
   }
 }
 

@@ -16,8 +16,11 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>{{ site.title }}</h1>
-        <p>
+        {% if page.cover %}
+        <img src="{{ page.cover }}">
+        {% endif %}
+        <h1><a href="/">{{ site.title }}</a></h1>
+<!--         <p>
           <a href="/">Home</a>
           &nbsp;|&nbsp;
           <a href="/about">About</a>
@@ -31,11 +34,26 @@
           <a href="/tags/linux">Linux</a>
           &nbsp;|&nbsp;
           <a href="/feed.xml">RSS</a>
-        </p>
+        </p> -->
+      <p>Welcome to my personal website.</p>
       </header>
       <section>
+        <p>I'm a Ruby developer with a strong devops background and some leadership experience. I have a personal interest in languages like Crystal and Rust. I like building things.</p>
+        <p>I currently work as Head of Engineering at <a href="https://www.blacklane.com" target="blank">Blacklane</a>.</p>
+        <p>
+          If you'd like to know more, check out my projects on <a href="https://github.com/lipanski" target="blank">GitHub</a>,
+          join me on <a href="https://www.linkedin.com/in/florinlipan/" target="blank">LinkedIn</a>,
+          follow me on <a href="https://twitter.com/helloflorin" target="blank">Twitter</a>
+          or just write me an <a href="mailto:florinlipan@gmail.com">email</a>.
+        </p>
+      </section>
+      <section>
 
-      {{ content }}
+        {% unless page.url == "/" %}
+        <p><a href="/">← Back</a></p>
+        {% endunless %}
+
+       {{ content }}
 
       </section>
 
@@ -57,7 +75,6 @@
       <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments.</a></noscript>
       {% endif %}
 
-      <footer>&copy; Florin Lipan</footer>
     </div>
     <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
     {% if site.google_analytics %}
