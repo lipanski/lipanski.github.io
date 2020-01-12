@@ -20,32 +20,26 @@
         <img src="{{ page.cover }}">
         {% endif %}
         <h1><a href="/">{{ site.title }}</a></h1>
-<!--         <p>
-          <a href="/">Home</a>
-          &nbsp;|&nbsp;
-          <a href="/about">About</a>
-          &nbsp;|&nbsp;
-          <a href="/tags/devops">Devops</a>
-          &nbsp;|&nbsp;
-          <a href="/tags/crystal">Crystal</a>
-          &nbsp;|&nbsp;
-          <a href="/tags/ruby">Ruby</a>
-          &nbsp;|&nbsp;
-          <a href="/tags/linux">Linux</a>
-          &nbsp;|&nbsp;
-          <a href="/feed.xml">RSS</a>
-        </p> -->
-      <p>Welcome to my personal website.</p>
+        <p>Welcome to my personal website.</p>
       </header>
       <section>
-        <p>I'm a Ruby developer with a strong devops background and some leadership experience. I have a personal interest in languages like Crystal and Rust. I like building things.</p>
-        <p>I currently work as Head of Engineering at <a href="https://www.blacklane.com" target="blank">Blacklane</a>.</p>
+        <p>
+          I'm a Ruby developer with a strong devops background and leadership experience.
+          I have a personal interest in languages like Crystal and Rust.
+          I like building things.
+        </p>
+        <p>
+          I currently work as Head of Engineering at <a href="https://www.blacklane.com" target="blank">Blacklane</a>.
+        </p>
         <p>
           If you'd like to know more, check out my projects on <a href="https://github.com/lipanski" target="blank">GitHub</a>,
           join me on <a href="https://www.linkedin.com/in/florinlipan/" target="blank">LinkedIn</a>,
           follow me on <a href="https://twitter.com/helloflorin" target="blank">Twitter</a>
-          or just write me an <a href="mailto:florinlipan@gmail.com">email</a>.
+          or just write me an <a href="mailto:florinlipan@gmail.com">email</a>. You can find my CV <a href="/cv.pdf" target="blank">here</a>.
         </p>
+        {% if page.url == "/" %}
+        <p>Scroll down for my blog or follow the <a href="/feed.xml">feed</a>.</p>
+        {% endif %}
       </section>
       <section>
 
