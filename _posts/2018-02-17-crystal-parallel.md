@@ -3,6 +3,7 @@ layout: default
 title: "Crystal: Raising exceptions from Fibers, the parallel macro and invalid memory access"
 tags: crystal
 comments: true
+cover: /assets/images/cyprinus-barbus.jpg
 ---
 
 ## {{ page.title }}
