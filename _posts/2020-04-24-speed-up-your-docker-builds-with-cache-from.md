@@ -8,7 +8,7 @@ cover: /assets/images/chaetodon-guttatus.jpg
 
 ## {{ page.title }}
 
-Using the Docker cache efficiently can result in significantly faster build times. Then again, there are environments where individual builds happen independent of each other and the build cache is never preserved. Every build starts from zero which can be slow and wasteful. It's the case of some CI/CD systems.
+Using the Docker cache efficiently can result in significantly faster build times. In some environments though, like CI/CD systems, individual builds happen independent of each other and the build cache is never preserved. Every build starts from zero which can be slow and wasteful. This article will try to provide some solutions for these cases.
 
 As long as you're pushing images to a remote registry, you can always use a previously built image as a cache layer for a new build. You can achieve this by setting the `--cache-from` option on the `docker build` call. For versions of Docker that don't include BuildKit, you'll have to pull the image yourself before running `docker build`. Assuming the latter, here's how things would look like:
 
