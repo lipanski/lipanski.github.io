@@ -57,5 +57,5 @@ end
 
 That's pretty much it. You can use this URL helper whenever your ActiveStorage files are to be served directly through a CDN.
 
-To end, Rails 6.1 will allow defining multiple services for the same environment, which means you'll be able to use both public and private buckets in your code. This makes using public buckets and CDNs a bit more interesting. See this [PR](https://github.com/rails/rails/pull/34935) for more details.
+To conclude, Rails 6.1 will allow defining multiple services for the same environment, which means you'll be able to use both public and private buckets in your code. This makes using public buckets and CDNs a bit more interesting. See this [PR](https://github.com/rails/rails/pull/34935) for more details.
 
