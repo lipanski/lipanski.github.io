@@ -8,11 +8,11 @@ cover: /assets/images/cyprinus-aspius.jpg
 
 ## {{ page.title }}
 
-ActiveStorage makes it really easy to upload files from Rails to an S3 bucket or an S3-compatible service, like DigitalOcean Spaces. Please refer to the [official documentation](https://edgeguides.rubyonrails.org/active_storage_overview.html) if you'd like to know more about setting up ActiveStorage.
+ActiveStorage makes it really easy to upload files from Rails to an S3 bucket or an S3-compatible service, like DigitalOcean Spaces. Refer to the [official documentation](https://edgeguides.rubyonrails.org/active_storage_overview.html) if you'd like to know more about setting up ActiveStorage.
 
-If your uploads are meant to be public and you were thinking of serving them directly through the CDN sitting in front of your bucket, you'll soon notice a problem: ActiveStorage URLs are built to always go through your Rails app, mainly through [ActiveStorage::BlobsController](https://github.com/rails/rails/blob/bc9fb9cf8b5dbe8ecf399ffd5d48d84bdb96a9db/activestorage/app/controllers/active_storage/blobs_controller.rb#L10-L13), which controls the cache headers and redirects to the bucket URL. Your Rails app will be the first point of contact even if it's just to retrieve the bucket URL. On top of that, there's no place to specify a CDN host to replace the bucket host.
+If your uploads are meant to be public and you were thinking of serving them directly through the CDN sitting in front of your S3 bucket, you'll soon notice a problem: ActiveStorage URLs are built to always go through your Rails app, mainly through [ActiveStorage::BlobsController](https://github.com/rails/rails/blob/bc9fb9cf8b5dbe8ecf399ffd5d48d84bdb96a9db/activestorage/app/controllers/active_storage/blobs_controller.rb#L10-L13). This controller is responsible for setting the cache headers and redirecting to the bucket URL. Your Rails app will be the first point of contact even if it's just to retrieve the bucket URL. On top of that, there's no place to specify a CDN host to replace the bucket host.
 
-In order to translate stored files into URLs, Rails provides the URL helper [rails_blob_url](https://edgeguides.rubyonrails.org/active_storage_overview.html#linking-to-files), which basically resolves to `ActiveStorage::BlobsController`. We'd like to introduce a new helper that points us directly to our CDN host.
+Fortunately, there is an easy way to go around this problem. In order to translate stored files into URLs, Rails provides the URL helper [rails_blob_url](https://edgeguides.rubyonrails.org/active_storage_overview.html#linking-to-files), which basically resolves to this `ActiveStorage::BlobsController`. We'd like to introduce a new helper that points directly to our CDN host.
 
 Though there are different ways of solving this problem, I found using Rails direct routes an elegant solution. [Rails direct routes](https://guides.rubyonrails.org/routing.html#direct-routes) provide a way to create URL helpers directly from your `config/routes.rb`:
 
@@ -55,7 +55,7 @@ direct :rails_public_blob do |blob|
 end
 ```
 
-That's pretty much it. You can use this URL helper whenever your ActiveStorage files are to be served directly through a CDN.
+You can use this new URL helper whenever your ActiveStorage files are to be served directly through a CDN.
 
-To conclude, Rails 6.1 will allow defining multiple services for the same environment, which means you'll be able to use both public and private buckets in your code. This makes using public buckets and CDNs a bit more interesting. See this [PR](https://github.com/rails/rails/pull/34935) for more details.
+To conclude, Rails 6.1 will allow defining multiple storage services for the same environment, which means you'll be able to use both public and private buckets from your code. This makes using public buckets and CDNs an even more viable option than before. See this [PR](https://github.com/rails/rails/pull/34935) for more details.
 
