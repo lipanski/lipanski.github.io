@@ -7,12 +7,16 @@ cover: /assets/images/pleuronectes-limandoides.jpg
 ---
 
 ## {{ page.title }}
-
-**Update:** You can find the slides from the RUG:B meetup [here](/slides/dockerfile/index.html).
+{:.no_toc}
 
 The simplicity of the *Dockerfile* format is probably one of the reasons why Docker managed to become so popular in the first place. Getting something working is fairly easy. Producing a clean, small, secure image that will not leak secrets might not be as straight-forward though.
 
-This post will try to share some best practices when writing a *Dockerfile* for a Ruby application. Most of these suggestions should be valid for any other runtime as well.
+This post will try to share some best practices when writing a *Dockerfile* for a Ruby app, though most of these points should apply to any other runtime as well.
+
+Here's a short summary of what's coming:
+
+* Table of Contents
+{:toc}
 
 The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>.
 
@@ -816,9 +820,10 @@ docker build --build-arg GITHUB_TOKEN=xxx -t my-docker-image:v1 .
 
 If your application doesn't require private gems, you can reduce all the lines injecting the `GITHUB_TOKEN` to the much simpler `RUN bundle install` command.
 
-The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>.
+The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>. You can find the slides from my talk at the RUG:B meetup [here](/slides/dockerfile/index.html).
 
 ### Further reading
+{:.no_toc}
 
 - <https://pythonspeed.com/articles/dockerizing-python-is-hard/>
 - <https://blog.docker.com/2019/07/intro-guide-to-dockerfile-best-practices/>
