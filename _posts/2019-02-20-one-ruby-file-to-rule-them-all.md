@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "One Ruby file to rule them all: inline gems and inline ActiveRecord migrations"
+favourite: true
 tags: ruby
 comments: true
 cover: /assets/images/salmo-thymallus.jpg

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "Best practices when writing a Dockerfile for a Ruby application"
+favourite: true
 tags: devops ruby
 comments: true
 cover: /assets/images/pleuronectes-limandoides.jpg

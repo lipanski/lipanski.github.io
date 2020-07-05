@@ -1,6 +1,7 @@
 ---
 layout: default
 title: "Persistence in (AWS ElastiCache) Redis"
+favourite: true
 tags: devops
 comments: true
 cover: /assets/images/trigla-pini.jpg
