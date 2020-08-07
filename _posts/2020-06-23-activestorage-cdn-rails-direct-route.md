@@ -38,7 +38,7 @@ rails_public_blob_url(User.first.profile_picture)
 Rails.application.routes.url_helpers.rails_public_blob_url(User.first.profile_picture)
 ```
 
-Finally, let's refactor our route a bit:
+Let's refactor our route a bit:
 
 ```ruby
 # config/routes.rb
@@ -50,12 +50,52 @@ direct :rails_public_blob do |blob|
     route_for(:rails_blob, blob)
   else
     # Use an environment variable instead of hard-coding the CDN host
+    # You could also use the Rails.configuration to achieve the same
     File.join(ENV.fetch("CDN_HOST"), blob.key)
   end
 end
 ```
 
-You can use this new URL helper whenever your ActiveStorage files are to be served directly through a CDN.
+### Variants
 
-To conclude, Rails 6.1 will allow defining multiple storage services for the same environment, which means you'll be able to use both public and private buckets from your code. This makes using public buckets and CDNs an even more viable option than before. See this [PR](https://github.com/rails/rails/pull/34935) for more details.
+If you're using variants, things will look a bit different in your development environment. Running the following code:
 
+```ruby
+rails_blob_url(User.first.profile_picture.variant(resize_to_limit: [100, 100]).processed)
+```
+
+...will produce an error: `NoMethodError (undefined method `signed_id' for #<ActiveStorage::Variant>)`.
+
+According to [this comment](https://github.com/rails/rails/issues/32500#issuecomment-380004250), the recommended way for accessing variants directly is by using the `rails_representation_url` helper. The following call should work:
+
+```ruby
+rails_representation_url(User.first.profile_picture.variant(resize_to_limit: [100, 100]).processed)
+```
+
+Let's update our direct route to accomodate the logic for variants:
+
+```ruby
+# config/routes.rb
+
+direct :rails_public_blob do |blob|
+  # Preserve the behaviour of `rails_blob_url` inside these environments
+  # where S3 or the CDN might not be configured
+  if Rails.env.development? || Rails.env.test?
+    route = blob.is_a?(ActiveStorage::Variant) ? :rails_representation : :rails_blob
+    route_for(route, blob)
+  else
+    # Use an environment variable instead of hard-coding the CDN host
+    File.join(ENV.fetch("CDN_HOST"), blob.key)
+  end
+end
+```
+
+Note that the *production* version using the CDN works the same for both the original attachment as well as the variants.
+
+### Conclusion
+
+You can use this new URL helper whenever your ActiveStorage files should be served directly through a CDN without having to deploy this setup to your development environment.
+
+Rails 6.1 will allow defining multiple storage services for the same environment, which means you'll be able to use both public and private buckets from your code. This makes using public buckets and CDNs an even more viable option than before. See this [PR](https://github.com/rails/rails/pull/34935) for more details.
+
+Thanks to Eduardo  Álvarez for raising the variants issue in the comments.
