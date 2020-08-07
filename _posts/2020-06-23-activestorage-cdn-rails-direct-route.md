@@ -61,15 +61,17 @@ end
 If you're using variants, things will look a bit different in your development environment. Running the following code:
 
 ```ruby
-rails_blob_url(User.first.profile_picture.variant(resize_to_limit: [100, 100]).processed)
+image = User.first.profile_picture
+rails_blob_url(image.variant(resize_to_limit: [100, 100]).processed)
 ```
 
-...will produce an error: `NoMethodError (undefined method `signed_id' for #<ActiveStorage::Variant>)`.
+...will produce an error: `NoMethodError (undefined method 'signed_id' for #<ActiveStorage::Variant>)`.
 
 According to [this comment](https://github.com/rails/rails/issues/32500#issuecomment-380004250), the recommended way for accessing variants directly is by using the `rails_representation_url` helper. The following call should work:
 
 ```ruby
-rails_representation_url(User.first.profile_picture.variant(resize_to_limit: [100, 100]).processed)
+image = User.first.profile_picture
+rails_representation_url(image.variant(resize_to_limit: [100, 100]).processed)
 ```
 
 Let's update our direct route to accomodate the logic for variants:
@@ -81,7 +83,12 @@ direct :rails_public_blob do |blob|
   # Preserve the behaviour of `rails_blob_url` inside these environments
   # where S3 or the CDN might not be configured
   if Rails.env.development? || Rails.env.test?
-    route = blob.is_a?(ActiveStorage::Variant) ? :rails_representation : :rails_blob
+    route = 
+      if blob.is_a?(ActiveStorage::Variant)
+        :rails_representation
+      else
+       :rails_blob
+      end
     route_for(route, blob)
   else
     # Use an environment variable instead of hard-coding the CDN host
