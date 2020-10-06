@@ -44,6 +44,7 @@
         {{ content }}
 
         {% unless page.url == "/" %}
+        <p><em>If you enjoyed my blog post, please spread the news:</em></p>
         <!-- Sharingbutton Twitter -->
         <a class="resp-sharing-button__link" href="https://twitter.com/intent/tweet/?text={{ page.title | uri_encode }}&amp;url={{ page | absolute_url }}" target="_blank" rel="noopener" aria-label="Share on Twitter">
           <div class="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--large"><div aria-hidden="true" class="resp-sharing-button__icon resp-sharing-button__icon--solid">
@@ -91,7 +92,6 @@
 
     </div>
     <script src="{{ '/assets/js/scale.fix.js' | relative_url }}"></script>
-    <script data-goatcounter="https://stats.lipanski.com/count" async src="//stats.lipanski.com/count.js"></script>
     {% if site.google_analytics %}
     <script>
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
