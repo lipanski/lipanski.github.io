@@ -5,7 +5,7 @@ tags: devops
 comments: true
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 Dynamic nginx modules allow you to extend the functionality of nginx without having to recompile the entire suite. However, compiling these modules is not exactly trivial.
 
@@ -16,7 +16,7 @@ cd /opt
 git clone https://github.com/Vasfed/nginx_ipset_blacklist.git
 ```
 
-### Converting a static module to a dynamic module
+## Converting a static module to a dynamic module
 
 In case the module is static, you'll want to convert its configuration to a dynamic one. You can figure out if a module is static by looking inside its `config` file, present inside the root of the module. If this file contains a call to `auto/module`, then it's dynamic. Otherwise you'll need to convert it.
 
@@ -50,7 +50,7 @@ fi
 
 You can read more about converting static modules to dynamic modules [here](https://www.nginx.com/resources/wiki/extending/converting/).
 
-### Compiling the module
+## Compiling the module
 
 In order to compile the module, you'll need the nginx source code of the very same version that's running on the target machine. You can figure out the version by calling:
 
@@ -97,7 +97,7 @@ make clean
 
 ...and starting again from the `./configure` step.
 
-### Using a dynamic module
+## Using a dynamic module
 
 The final step is actually using the module. Open your `/etc/nginx/nginx.conf` and add the following line towards the beginning of the file:
 
@@ -111,7 +111,7 @@ load_module modules/ngx_http_ipset_blacklist.so;
 service nginx restart
 ```
 
-### Links
+## Links
 
 - <https://github.com/Vasfed/nginx_ipset_blacklist>
 - <https://www.nginx.com/resources/wiki/extending/converting/>

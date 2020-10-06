@@ -7,7 +7,7 @@ comments: true
 cover: /assets/images/trigla-pini.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 If you restart your Redis server and expect your data to still be there when the server comes back, you might be in for a surprise.
 
@@ -19,7 +19,7 @@ If you're using Redis solely as a cache and can afford losing the data between r
 
 On the other hand, if you're using Sidekiq or other similar tools backed by Redis, this article might help protect your data on the long run.
 
-### Persistence in Redis
+## Persistence in Redis
 
 There are two ways to ensure data persistence in Redis across restarts: through regular database snapshots (RDB) or by enabling the *append-only file* (AOF), a log capturing all the performed operations. Both methods, if enabled, will be replayed automatically when your Redis server starts.
 
@@ -86,7 +86,7 @@ You can **combine the RDB and AOF methods**. The [Redis documentation](https://r
 
 > If you care a lot about your data, but still can live with a few minutes of data loss in case of disasters, you can simply use RDB alone.
 
-### What happens when Redis runs out of memory?
+## What happens when Redis runs out of memory?
 
 When discussing persistence and data integrity, it's good to understand what happens when you're trying to push a new value to Redis and your server is out of memory.
 
@@ -98,7 +98,7 @@ You can check your current configuration by calling `info memory` inside Redis. 
 
 Last but not least, you can control the amount of memory Redis has access to by making use of the `maxmemory` configuration directive.
 
-### Persistence in AWS ElastiCache Redis
+## Persistence in AWS ElastiCache Redis
 
 Persistence in AWS ElastiCache Redis clusters is a more complicated story. They really live by that *Cache* in *ElastiCache*. For the most basic, single node deployment using the default parameter group, persistence is not guaranteed: after a restart or a crash, your data is gone.
 
@@ -141,7 +141,7 @@ In **conclusion**, the solution I'd recommend in order to keep your AWS ElastiCa
 
 *The information describe above was collected around February 2020. You should consult the official AWS documentation for any changes beyond this date. All prices correspond to the Frankfurt region.*
 
-### Reference
+## Reference
 
 - <https://redis.io/topics/persistence>
 - <https://redis.io/topics/lru-cache>

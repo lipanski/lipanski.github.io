@@ -7,7 +7,7 @@ comments: true
 cover: /assets/images/cyprinus-barbus.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 **UPDATE 2:** My patch to the original `parallel` macro made it into [Crystal 0.25.0](https://github.com/crystal-lang/crystal/releases/tag/0.25.0), which also provides [proper documentation](https://crystal-lang.org/api/0.25.0/toplevel.html#parallel%28%2Ajobs%29-macro) for this quite useful language feature.
 
@@ -17,7 +17,7 @@ Concurrency can be achieved in Crystal by using *Fibers*. Communication between 
 
 This post will focus on the `parallel` macro, present one of its drawbacks when dealing with unhandled exceptions and introduce a solution: the `parallel!` macro.
 
-### The parallel macro
+## The parallel macro
 
 One useful tool that didn't make it into the Crystal Book is the `parallel` macro. It allows firing up and waiting for several concurrent jobs in a more succinct manner:
 
@@ -50,7 +50,7 @@ a, b, c =
 puts a, b, c
 ```
 
-### Raising exceptions in Fibers and usage of `uninitialized` in `parallel`
+## Raising exceptions in Fibers and usage of `uninitialized` in `parallel`
 
 Exceptions raised from *Fibers* don't propagate to the main thread. Though there are ways to re-raise these exceptions, the `parallel` macro doesn't implement this.
 
@@ -137,7 +137,7 @@ puts a, b, c
 
 Notice how we had to compromise on the type of our variables here. Also, this solution is pretty verbose.
 
-### Re-raising exceptions and the `parallel!` macro
+## Re-raising exceptions and the `parallel!` macro
 
 I'm not a big fan of verbose (which is why I really enjoy Crystal and Ruby), so it was time for a macro to hide away all this code. Because I didn't want to compromise on the variable type, I decided to re-raise the exceptions to the main thread.
 
@@ -199,7 +199,7 @@ a, b, c =
 puts a, b, c
 ```
 
-### Links
+## Links
 
 * [Concurrency in Crystal](https://crystal-lang.org/docs/guides/concurrency.html)
 * [The parallel macro implementation](https://github.com/crystal-lang/crystal/blob/v0.24.1/src/concurrent.cr#L131)

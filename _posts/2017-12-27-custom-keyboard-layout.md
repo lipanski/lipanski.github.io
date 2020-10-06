@@ -6,9 +6,9 @@ comments: true
 cover: /assets/images/gadus-molva.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
-### History time
+## History time
 
 Apart from the Latin alphabet, the Romanian language uses five special letters: *ă*, *â*, *î*, *ș*, *ț*.
 
@@ -18,7 +18,7 @@ On the other hand, the German layouts expect a German hardware keyboard. When us
 
 In my ideal world, I would trigger the German *umlauts* with the `AltGr` key on top of the US layout and have the Romanian characters work side by side, the same way. There's definitely no layout for that. Fortunately, creating your own custom layout is quite easy in Ubuntu.
 
-### How to make your own custom layout
+## How to make your own custom layout
 
 Layouts are contained within the `/usr/share/X11/xkb/symbols` directory.
 
@@ -103,7 +103,7 @@ That's it - you can switch to your new layout by calling:
 setxkbmap fl
 ```
 
-### Links:
+## Links:
 
 - [The keyboard layout file from my dotfiles](https://github.com/lipanski/dotfiles/blob/master/usr/share/X11/xkb/symbols/fl)
 - <https://askubuntu.com/questions/510024/what-are-the-steps-needed-to-create-new-keyboard-layout-on-ubuntu>

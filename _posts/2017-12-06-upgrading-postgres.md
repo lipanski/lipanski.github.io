@@ -5,7 +5,7 @@ tags: devops
 comments: true
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 After upgrading your Postgres server to a newer version, your **data will not be migrated automatically** to the new installation.
 

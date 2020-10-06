@@ -5,7 +5,7 @@ tags: linux
 comments: true
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 Let's say you have a file encoded as ISO-8859-16 and would like to turn it into UTF-8.
 

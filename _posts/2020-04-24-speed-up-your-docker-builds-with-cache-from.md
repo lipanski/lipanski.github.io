@@ -6,7 +6,7 @@ comments: true
 cover: /assets/images/chaetodon-guttatus.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 Using the Docker cache efficiently can result in significantly faster build times. In some environments though, like CI/CD systems, individual builds happen independent of each other and the build cache is never preserved. Every build starts from zero which can be slow and wasteful. This article will try to provide some solutions for these cases.
 
@@ -26,7 +26,7 @@ docker build --cache-from ${IMAGE}:0.1.0 -t ${IMAGE}:0.2.0 .
 docker push ${IMAGE}:0.2.0
 ```
 
-### Maximize your chances of hitting the cache
+## Maximize your chances of hitting the cache
 
 You can pass the `--cache-from` option **several times**, to provide different images to use as a cache. Let's assume your remote registry contains version builds (`1.0.0`), which you build once a month, and branch builds, which are built whenever you push code to a branch. Ideally you'd use the branch build images, because those are fresher, but if no branch was built yet you'd like to fall back to a version build image. You can call `--cache-from` several times to fetch the most suitable image:
 
@@ -55,7 +55,7 @@ docker push ${IMAGE}:current-branch
 
 At this point you'll have to do the math: depending on your build infrastructure, if the time to fetch the remote images and build with `--cache-from` is less than the time it takes to build without using the cache, then this was worth it. If you're build is fast anyway or downloading the images comes at a high cost, then it might not be something for you. 
 
-### Multi-stage builds
+## Multi-stage builds
 
 With multi-stage builds things get a little more complicated. The intermediate build stages are never pushed to the remote registry so you can't use them as cache.
 
@@ -126,7 +126,7 @@ On top of that, as explained in the previous section you can call `--cache-from`
 
 This is where you have to do the math again: is the bandwidth/speed penalty incurring from pushing and pulling these intermediate images worth it? Should you optimize for build time or for deployment/scaling time? Would you trade multi-stage builds against simplifying the build process?
 
-### Same but different: docker load/save
+## Same but different: docker load/save
 
 If your build environment has access to some shared storage (e.g. S3, EBS or just a shared directory), you can use the `docker save` and `docker load` commands to store and retrieve images. You can later reuse these images in order to enhance your local build cache. The `docker save` command saves one or more images as a tar file, which can be placed inside your shared storage. Before your next build, you can retrieve this file and unpack the images back into the local registry by calling `docker load`. During the build, point the `--cache-from` option to the loaded image. Here's how it goes:
 
@@ -143,10 +143,10 @@ docker save -o /some/shared/directory/my-image.tar my-image:latest
 
 This approach can be a bit more flexible in environments where it's hard to access the remote registry. 
 
-### BuildKit
+## BuildKit
 
 If your Docker version has access to [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/), check out the improvements around `BUILDKIT_INLINE_CACHE`, which can save you an expensive `docker pull` operation. 
 
-### Further reading
+## Further reading
 
 Check out my other article on [Best practices when writing a Dockerfile]({% post_url 2019-09-20-dockerfile-ruby-best-practices %}).

@@ -5,7 +5,7 @@ tags: linux
 comments: true
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 Use the `lsusb` command to figure out the vendor and product ID of the USB device you are interested in:
 

@@ -6,13 +6,13 @@ comments: true
 cover: /assets/images/holocentrus-punctatus.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 [ModSecurity](https://modsecurity.org/) is a **web application firewall** integrated with Apache and nginx. It can match request information at various stages and throttle or allow/deny requests based on the rules you define. ModSecurity comes with the [OWASP core rule set](https://github.com/SpiderLabs/owasp-modsecurity-crs) but a [paid set of rules](http://modsecurity.org/rules.html) is also available. Integrating your own rules is quite easy.
 
 This post will try to give you an overview of how to **install the ModSecurity nginx module**, how to **configure the module** and, finally, how to **create a rule for blocking a list of mailicous IPs**.
 
-### Installing ModSecurity-nginx (Bash)
+## Installing ModSecurity-nginx (Bash)
 
 For the equivalent Ansible playbook, skip to the next chapter.
 
@@ -97,7 +97,7 @@ Finally, include the module somewhere towards the beginning of your nginx config
 load_module modules/ngx_http_modsecurity_module.so;
 ```
 
-### Installing ModSecurity-nginx (Ansible)
+## Installing ModSecurity-nginx (Ansible)
 
 This is the equivalent of the previous Bash commands in Ansible. It assumes nginx is already installed. It's been tested with Ubuntu 14.04.
 
@@ -180,7 +180,7 @@ This is the equivalent of the previous Bash commands in Ansible. It assumes ngin
 ```
 {% endraw %}
 
-### Configuring ModSecurity-nginx
+## Configuring ModSecurity-nginx
 
 The [ModSecurity Reference Manual](https://github.com/SpiderLabs/ModSecurity/wiki/Reference-Manual) provides a good overview of all the options and rules that ship with ModSecurity. Likewise, the [ModSecurity-nginx README](https://github.com/SpiderLabs/ModSecurity-nginx) provides information about using the nginx module.
 
@@ -254,7 +254,7 @@ SecAuditLogParts ABKZ
 SecAuditLog /var/log/nginx/modsecurity-audit.log
 ```
 
-### A rule to block IPs based on a list
+## A rule to block IPs based on a list
 
 It's time to write your first custom rule. Let's introduce a blacklist - a file containing a list of IPs (masked or not) that should be denied any requests:
 
@@ -300,7 +300,7 @@ That's pretty much it. Requests by IPs on your list will now be blocked and clie
 
 Note that any changes to your list of IPs or to your ModSecurity rules will require *reloading nginx* in order for ModSecurity to pick up the changes.
 
-### Running nginx behind a reverse proxy
+## Running nginx behind a reverse proxy
 
 If you're running nginx behind a reverse proxy (e.g. a load balancer), which hides the client IP but sets the `X-Forwarded-For` header correctly, I recommend setting the `real_ip_header` option in your nginx configuration:
 
@@ -319,7 +319,7 @@ http {
 
 Sometimes, you'll also want to enable the `real_ip_recursive` option - see the [documentation](http://nginx.org/en/docs/http/ngx_http_realip_module.html#real_ip_recursive) for more details.
 
-### Alternatives
+## Alternatives
 
 One alternative that works with nginx is [lua-resty-waf](https://github.com/p0pr0ck5/lua-resty-waf). It requires [OpenResty](https://openresty.org/en/) though or recompiling nginx with OpenResty/Lua.
 
@@ -327,7 +327,7 @@ Another one would be the cloud-based [AWS WAF](https://aws.amazon.com/waf/), whi
 
 If you only want to allow/deny a list of IPs, there's the [nginx-ipset-blacklist module](https://github.com/Vasfed/nginx_ipset_blacklist), but it looks quite outdated and won't work with newer nginx versions. On the other hand, you could use plain `iptables` or `iptables` integrated with [IpSet](http://ipset.netfilter.org/) - a fast lookup store for IP addresses.
 
-### Links
+## Links
 
 * [Compiling and using dynamic nginx modules](/posts/nginx-dynamic-modules)
 * [ModSecurity Compilation Recipe for Ubuntu 15.04](https://github.com/SpiderLabs/ModSecurity/wiki/Compilation-recipes#ubuntu-1504)

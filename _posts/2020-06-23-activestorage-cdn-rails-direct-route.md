@@ -6,7 +6,7 @@ comments: true
 cover: /assets/images/cyprinus-aspius.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 
 ActiveStorage makes it really easy to upload files from Rails to an S3 bucket or an S3-compatible service, like DigitalOcean Spaces. Refer to the [official documentation](https://edgeguides.rubyonrails.org/active_storage_overview.html) if you'd like to know more about setting up ActiveStorage.
 
@@ -56,7 +56,7 @@ direct :rails_public_blob do |blob|
 end
 ```
 
-### Variants
+## Variants
 
 If you're using variants, things will look a bit different in your development environment. Running the following code:
 
@@ -99,7 +99,7 @@ end
 
 Note that the *production* version using the CDN works the same for both the original attachment as well as the variants.
 
-### Conclusion
+## Conclusion
 
 You can use this new URL helper whenever your ActiveStorage files should be served directly through a CDN without having to deploy this setup to your development environment.
 

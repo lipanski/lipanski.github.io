@@ -7,7 +7,7 @@ comments: true
 cover: /assets/images/pleuronectes-limandoides.jpg
 ---
 
-## {{ page.title }}
+# {{ page.title }}
 {:.no_toc}
 
 The simplicity of the *Dockerfile* format is probably one of the reasons why Docker managed to become so popular in the first place. Getting something working is fairly easy. Producing a clean, small, secure image that will not leak secrets might not be as straight-forward though.
@@ -23,7 +23,7 @@ The code presented here can also be found on Github: <https://github.com/lipansk
 
 Let's begin:
 
-### 1. Pin your base image version
+## 1. Pin your base image version
 
 Bad:
 
@@ -45,7 +45,7 @@ If you want **reproducible builds** (and trust me, you want them), make sure to 
 
 If you want to update your base image, do it in a **controlled, explicit** manner which can also be reverted easily (e.g. via a pull request). It will save you a lot of debugging pain in the future.
 
-### 2. Use only trusted or official base images
+## 2. Use only trusted or official base images
 
 Bad:
 
@@ -72,7 +72,7 @@ For anything that's not available as an official image, build and host the base 
 
 Keep in mind that Docker Hub does not prevent modifying images or tags by their authors over time, which is why you probably shouldn't trust everything in there.
 
-### 3. Pin your application dependencies
+## 3. Pin your application dependencies
 
 Bad:
 
@@ -94,13 +94,13 @@ Similary to the base image version, if you don't pin your application dependenci
 
 Most package managers have a way to pin dependencies, be it `Gemfile.lock`, `package-lock.json`, `yarn.lock` or `Pipfile.lock` - use it to guarantee **reproducible builds**.
 
-### 4. Add a .dockerignore file to your repository
+## 4. Add a .dockerignore file to your repository
 
 The Docker `COPY` instruction doesn't honour the `.gitignore` file. This means that whenever you call `COPY .` with a wildcard argument, you could be leaking unwanted files inside your Docker image.
 
 Fortunately you can add a `.dockerignore` file to your code base, which works pretty much the same way the `.gitignore` file does. In addition to copying over the contents of your `.gitignore` file, you might want to include the `.git/` directory as well to the list of files ignored by Docker.
 
-### 5. Group commands by how likely they are to change individually
+## 5. Group commands by how likely they are to change individually
 
 Bad:
 
@@ -133,7 +133,7 @@ CMD ruby -e "puts 1 + 2"
 
 Less build steps means less intermediary images that Docker needs to keep in storage. On the other hand, you need to be careful not to group tasks together that don't change at the same time - otherwise you might be running all tasks when only one requires changes, which results in a slower build process.
 
-### 6. Place the least likely to change commands at the top
+## 6. Place the least likely to change commands at the top
 
 Bad:
 
@@ -173,7 +173,7 @@ Docker will rebuild all steps top to bottom, starting from the one where *change
 
 Placing the least likely to change commands at the top ensures an efficient usage of the Docker cache and results in shorter build times.
 
-### 7. Avoid running your application as root
+## 7. Avoid running your application as root
 
 Bad:
 
@@ -213,7 +213,7 @@ CMD rackup
 
 Running your application as root introduces an **additional vector of attack**. If an attacker gains remote code execution through an application vulnerability, there are ways to escape the container environment. Much more damage can be inflicted by the root user than when running your application as an unprivileged user.
 
-### 8. When running COPY or ADD (as a different user) use --chown
+## 8. When running COPY or ADD (as a different user) use --chown
 
 Bad:
 
@@ -255,7 +255,7 @@ CMD rackup
 
 The `USER` directive described in the previous step only applies to `RUN`, `CMD` or `ENTRYPOINT`. For `COPY` and `ADD` you have to use the `--chown` argument.
 
-### 9. Avoid leaking secrets inside your image
+## 9. Avoid leaking secrets inside your image
 
 Bad:
 
@@ -273,7 +273,7 @@ Secrets should never appear inside your *Dockerfile* in plain text. Instead, the
 
 **Note:** Whenever you use one of these `docker build` arguments, be it `--build-arg` or `-e`, the full command (including the secret values) will show up in your `docker history`. Depending on the environment where the build happens, you might want to avoid this. A solution to this problem is detailed in step 14.
 
-### 10. Always clean up injected secrets within the same build step
+## 10. Always clean up injected secrets within the same build step
 
 Bad:
 
@@ -305,7 +305,7 @@ RUN echo "${PRIVATE_SSH_KEY}" > /root/.ssh/id_rsa && \
 
 The first example produces two build steps that retain the injected secret. If anyone has access to your build history, they will be able to retrieve your secret. The suggested solution groups together the actions that inject and require the secret with the one that cleans it up. This produces a clean build history.
 
-### 11. Fetching private dependencies via a Github token injected through the gitconfig
+## 11. Fetching private dependencies via a Github token injected through the gitconfig
 
 Quite often your application will require private dependencies, usually hosted inside private repositories, be it Ruby gems or NPM packages.
 
@@ -349,7 +349,7 @@ You can build this image by calling: `docker build --build-arg GITHUB_TOKEN=xxx 
 
 > Another way of achieving the same is by using SSH keys. It saves you the hassle of rewriting the `Gemfile` URLs but you still need to clean up the private key at the end.
 
-### 12. Minimize image size by opting for small base images when possible
+## 12. Minimize image size by opting for small base images when possible
 
 Bad:
 
@@ -385,7 +385,7 @@ When opting for a compact operating system, pay special attention to:
 - The **choice of shell** - some base images might not even provide a shell!
 - The **security** implications and the **stability** of the underlying operating systems: avoid environments that are experimental or not battle-tested.
 
-### 13. Use multi-stage builds to reduce the size of your image
+## 13. Use multi-stage builds to reduce the size of your image
 
 Bad:
 
@@ -446,7 +446,7 @@ nokogiri-multi    70.1MB
 
 As you can see, the difference can be quite signficant...
 
-### 14. Use multi-stage builds to avoid leaking secrets inside your docker history
+## 14. Use multi-stage builds to avoid leaking secrets inside your docker history
 
 Bad:
 
@@ -553,7 +553,7 @@ IMAGE               CREATED             CREATED BY                              
 
 The multi-stage build only retains the history of the final image. The builder history is ignored and thus your secret is safe.
 
-### 15. When setting the CMD instruction, prefer the exec format over the shell format
+## 15. When setting the CMD instruction, prefer the exec format over the shell format
 
 Bad:
 
@@ -617,7 +617,7 @@ Why is this important? Some applications implement signals in order to exit grac
 
 Thanks to [Kamil Grabowski](https://twitter.com/_y3ti) for pointing this out on Twitter.
 
-### 16. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
+## 16. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
 
 In many cases, your test, development and production build processes might slightly differ from each other. If you're using Docker across all these environments, a common approach is to introduce one `Dockerfile` per environment. Keeping these files in sync can gradually become redundant, tedious or just easy to forget.
 
@@ -665,7 +665,7 @@ DOCKER_BUILDKIT=1 docker build --target=test .
 
 Notice the usage of the [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) feature flag. Prior to Docker 18.09 or without adding the `DOCKER_BUILDKIT=1` flag, a full build would still build all stages, including the test stage. The final artifact would still contain only the production dependencies but the build would take a little bit longer.
 
-### Putting it all together...
+## Putting it all together...
 
 Enough with the theory! Let's apply all these best practices on a sample Ruby application.
 
@@ -823,7 +823,7 @@ If your application doesn't require private gems, you can reduce all the lines i
 
 The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>. You can find the slides from my talk at the RUG:B meetup [here](/slides/dockerfile/index.html).
 
-### Further reading
+## Further reading
 {:.no_toc}
 
 - <https://pythonspeed.com/articles/dockerizing-python-is-hard/>
