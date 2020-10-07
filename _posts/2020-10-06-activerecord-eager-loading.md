@@ -9,9 +9,9 @@ cover: /assets/images/cyprinus-dobula.jpg
 
 # {{ page.title }}
 
-When squashing N+1 queries on a large code base, you might realize that tracking down *all* the associations that need to be eager loaded can be really tedious. Your code has to be *instrumented properly* and most of the times you need to reason about every single query, *one by one*. On top of that, eager loading can be fussy: calling `where`, `order` or `limit` on your associations might invalidate your eager loading efforts in some *unexpected* ways.
+Tracking down *all* the associations that need to be eager loaded in order to prevent N+1 queries can be tedious. Your code has to be *instrumented properly* and most of the times you need to reason about every single query, *one by one*. On top of that, eager loading can be fussy: calling `where`, `order` or `limit` on your associations might invalidate your eager loading efforts in some *unexpected* ways.
 
-This article will present an [**automated way of dealing with N+1**](#automatic-eager-loading) queries and it will show you [**how to go around some of the limitations of eager loading**](#things-that-break-eager-loading-where-order-limit) in ActiveRecord. Furthermore, it will show you [**how to write tests**](#preventing-n1-regressions-with-tests) to prevent those sneaky N+1 queries from coming back.
+This article will present an [**automated way of dealing with N+1**](#automatic-eager-loading) queries and it will explain [**how to go around some of the limitations of eager loading**](#things-that-break-eager-loading-where-order-limit) in ActiveRecord. Furthermore, it will show you [**how to write tests**](#preventing-n1-regressions-with-tests) to prevent those sneaky N+1 queries from coming back.
 
 ## Automatic eager loading
 
