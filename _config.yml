@@ -5,6 +5,7 @@ url: https://lipanski.com
 permalink: posts/:slug
 twitter:
   username: helloflorin
+  card: summary
 defaults:
   - scope:
       path: ""
