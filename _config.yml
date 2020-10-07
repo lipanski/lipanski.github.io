@@ -6,3 +6,4 @@ permalink: posts/:slug
 google_analytics: UA-111647435-1
 plugins:
 - jekyll-feed
+- jekyll-seo-tag
