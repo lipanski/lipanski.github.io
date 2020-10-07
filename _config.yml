@@ -2,11 +2,15 @@ theme: jekyll-theme-minimal
 title: Florin Lipan
 description: My personal website
 url: https://lipanski.com
-logo: /assets/images/logo.jpg
 permalink: posts/:slug
 twitter:
   username: helloflorin
   card: summary
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/images/logo.jpg
 google_analytics: UA-111647435-1
 plugins:
 - jekyll-feed
