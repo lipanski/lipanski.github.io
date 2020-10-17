@@ -11,7 +11,7 @@ cover: /assets/images/cyprinus-dobula.jpg
 
 Tracking down *all* the associations that need to be eager loaded in order to prevent N+1 queries can be tedious. Your code has to be *instrumented properly* and most of the times you need to reason about every single query, *one by one*. On top of that, eager loading can be fussy: calling `where`, `order` or `limit` on your associations might invalidate your eager loading efforts in some *unexpected* ways.
 
-This article will present an [**automated way of dealing with N+1**](#automatic-eager-loading) queries and it will explain [**how to go around some of the limitations of eager loading**](#things-that-break-eager-loading-where-order-limit) in ActiveRecord. Furthermore, it will show you [**how to write tests**](#preventing-n1-regressions-with-tests) to prevent those sneaky N+1 queries from coming back.
+This article will present an [**automated way of dealing with N+1**](#automatic-eager-loading) queries and it will explain [**how to go around some of the limitations of eager loading**](#things-that-break-eager-loading-where-order-limit) in ActiveRecord. Furthermore, it will show you [**how to use the query cache to your benefit**](#use-the-cache-luke) and [**how to write tests**](#preventing-n1-regressions-with-tests) to prevent those sneaky N+1 queries from coming back.
 
 ## Automatic eager loading
 
@@ -187,6 +187,59 @@ posts = Post.includes(:user).where("created_at < ?", time).to_a
 
 users = posts.map(&:user)
 # No queries here, they've been eager loaded already
+```
+
+## Use the cache, Luke!
+
+Let's say you'd like to query the **total number of posts for every user**:
+
+```ruby
+users = User.all
+# SELECT "users".* from "users"
+
+users.each { |user| user.posts.count }
+# SELECT COUNT(*) FROM "posts" WHERE user_id = 1
+# SELECT COUNT(*) FROM "posts" WHERE user_id = 2
+# SELECT COUNT(*) FROM "posts" WHERE user_id = 3
+# SELECT COUNT(*) FROM "posts" WHERE user_id = 4
+# SELECT COUNT(*) FROM "posts" WHERE user_id = 5
+```
+
+As you assumed, it triggered a bunch of N+1 queries. But this time there's no way to eager load these aggregate values by calling `includes`.
+
+Instead you can make use of the **ActiveRecord query cache**. By default, ActiveRecord caches results for every individual SQL query, ensuring that **subsequent calls placed within the same web request or background job will not hit the database**. 
+
+Our `COUNT` queries differ though -- every distinct `user_id` will break the caching. Then again, there's nothing speaking against **rewriting our queries to produce the same SQL every time**:
+
+```ruby
+users = User.all
+users.each do |user|
+  posts_count_per_user = Post.group(:user_id).count # Returns a Hash
+  posts_count_per_user[user.id] || 0
+end
+```
+
+Running this code from within a web request will produce the following log output:
+
+```
+#        (1.4ms)  SELECT "users".* from "users"
+#        (2.0ms)  SELECT COUNT(*) AS count_all, "posts"."user_id" AS posts_user_id FROM "posts" GROUP BY "posts"."user_id"
+# CACHE  (0.1ms)  SELECT COUNT(*) AS count_all, "posts"."user_id" AS posts_user_id FROM "posts" GROUP BY "posts"."user_id"
+# CACHE  (0.1ms)  SELECT COUNT(*) AS count_all, "posts"."user_id" AS posts_user_id FROM "posts" GROUP BY "posts"."user_id"
+# CACHE  (0.1ms)  SELECT COUNT(*) AS count_all, "posts"."user_id" AS posts_user_id FROM "posts" GROUP BY "posts"."user_id"
+# CACHE  (0.1ms)  SELECT COUNT(*) AS count_all, "posts"."user_id" AS posts_user_id FROM "posts" GROUP BY "posts"."user_id"
+```
+
+The first iteration triggered a `COUNT` query, but **all subsequent calls where cached**, which means they didn't hit the database and the N+1 situation was avoided.
+
+Keep in mind that relying on the query cache too much might have a **potential impact on the amount of allocations** and consequently memory usage of your app, especially when triggering queries that have to initialize many ActiveRecord models. For this reason, prefer using `includes` when possible or write your *aggregate* queries in such a way that they resolve to simple structures (hashes or arrays of primitive values).
+
+If you'd like to enable the query cache outside of web requests or background jobs or if you'd like to try it out in your `rails console`, you can call:
+
+```ruby
+ActiveRecord::Base.connection.enable_query_cache!
+# Any queries triggered here might be cached
+ActiveRecord::Base.connection.disable_query_cache!
 ```
 
 ## Preventing N+1 regressions with tests
