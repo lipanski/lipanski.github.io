@@ -230,7 +230,7 @@ Running this code from within a web request will produce the following log outpu
 # CACHE  (0.1ms)  SELECT COUNT(*) AS count_all, "posts"."user_id" AS posts_user_id FROM "posts" GROUP BY "posts"."user_id"
 ```
 
-The first iteration triggered a `COUNT` query, but **all subsequent calls where cached**, which means they didn't hit the database and the N+1 situation was avoided.
+The first iteration triggered a `COUNT` query, but **all subsequent calls were cached**, which means they didn't hit the database and the N+1 situation was avoided.
 
 Keep in mind that relying on the query cache too much might have a **potential impact on the amount of allocations** and consequently memory usage of your app, especially when triggering queries that have to initialize many ActiveRecord models. For this reason, prefer using `includes` when possible or write your *aggregate* queries in such a way that they resolve to simple structures (hashes or arrays of primitive values).
 
