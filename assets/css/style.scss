@@ -19,6 +19,10 @@ section {
   border-bottom:1px solid #e5e5e5;
 }
 
+p.small {
+  font-size: 1.2rem;
+}
+
 @media print, screen and (min-width: 961px) {
   div.wrapper {
     width:960px;
