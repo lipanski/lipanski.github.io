@@ -3,7 +3,7 @@ layout: default
 title: "The smallest Docker image to serve static websites"
 tags: devops
 comments: true
-cover: /assets/images/cyprinus-dobula.jpg
+cover: /assets/images/coryphaena-pentadactyla.jpg
 ---
 
 # {{ page.title }}
@@ -126,6 +126,8 @@ FROM lipanski/docker-static-website:latest
 COPY . .
 ```
 
-This produces a single-layer image of *186KB* + whatever the size of your static website and *nothing else*. If you need to configure *thttpd* in a different way, you can override the `CMD`.
+This produces a single-layer image of *186KB* + whatever the size of your static website and *nothing else*. If you need to configure *thttpd* in a different way, you can simply override the `CMD`.
 
-The code is also available at <https://github.com/lipanski/docker-static-website>.
+To conclude, Docker *can* be used efficiently to package and serve static websites.
+
+The code is available at <https://github.com/lipanski/docker-static-website>.
