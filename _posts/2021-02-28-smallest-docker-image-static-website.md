@@ -118,7 +118,7 @@ static              latest              ab0699ed2690        About a minute ago  
 
 The *186KB* we're left with correspond to the size of the *thttpd* static binary and the static files that were copied over, which in my case was just one file containing the text `hello world`. Note that the `alpine` step of the multi-stage build is actually quite large in size (*~130MB*), but it can be reused across builds and doesn't get pushed to the registry.
 
-At this point, you can convert the image we built so far into a base image for all your static websites and store it in a registry, so that you can skip the `alpine` step entirely. Or you could use [my Docker Hub build](https://hub.docker.com/r/lipanski/docker-static-website):
+At this point, you can convert the image we built so far into a base image for all your static websites and store it in a registry, so that you can skip the `alpine` step entirely. Or you can simply use [my Docker Hub build](https://hub.docker.com/r/lipanski/docker-static-website):
 
 ```dockerfile
 FROM lipanski/docker-static-website:latest
