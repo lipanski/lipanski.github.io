@@ -10,9 +10,9 @@ cover: /assets/images/coryphaena-pentadactyla.jpg
 
 Until recently, I used to think that serving static websites from Docker would be a waste of time and storage. Bundling nginx or various other heavy runtimes inside a Docker image for the sole purpose of serving static files didn't seem like the best idea - Netlify or Github Pages can handle this much better. But my hobby server was sad and cried digital tears of jealousy.
 
-A recent HackerNews post about [readbean](https://justine.lol/redbean/index.html), a single-binary, super tiny, static file server got me thinking. If I could get something like that on a small Docker image, it wouldn't feel like a waste.
+A recent HackerNews post about [readbean](https://justine.lol/redbean/index.html), a single-binary, super tiny, static file server got me thinking. If I could get something like this on a small Docker image, it wouldn't feel like a waste. So begins my journey to find the most time/storage efficient Docker image to serve a static website.
 
-After evaluating a few static file servers with similar specs, I settled for [thttpd](https://www.acme.com/software/thttpd/), which comes with a similar small footprint and seems a bit more battle-tested.
+After evaluating a few static file servers with similar specs, I settled for [thttpd](https://www.acme.com/software/thttpd/), which comes with a similar small footprint but seems a bit more battle-tested.
 
 Running `thttpd` goes like this:
 
@@ -118,7 +118,7 @@ static              latest              ab0699ed2690        About a minute ago  
 
 The *186KB* we're left with correspond to the size of the *thttpd* static binary and the static files that were copied over, which in my case was just one file containing the text `hello world`. Note that the `alpine` step of the multi-stage build is actually quite large in size (*~130MB*), but it can be reused across builds and doesn't get pushed to the registry.
 
-At this point, you can convert the image we built so far into a base image for all your static websites and store it in a registry, so that you can skip the `alpine` step entirely. Or you can simply use [my Docker Hub build](https://hub.docker.com/r/lipanski/docker-static-website):
+At this point, you can convert the image we built so far into a base image for all your static websites and push it to a registry, so that you can skip the `alpine` step entirely. Or you can simply use [my Docker Hub build](https://hub.docker.com/r/lipanski/docker-static-website):
 
 ```dockerfile
 FROM lipanski/docker-static-website:latest
@@ -126,7 +126,15 @@ FROM lipanski/docker-static-website:latest
 COPY . .
 ```
 
-This produces a single-layer image of *186KB* + whatever the size of your static website and *nothing else*. If you need to configure *thttpd* in a different way, you can simply override the `CMD`.
+This produces a single-layer image of *186KB* + whatever the size of your static website and *nothing else*. If you need to configure *thttpd* in a different way, you can just override the `CMD` line:
+
+```dockerfile
+FROM lipanski/docker-static-website:latest
+
+COPY . .
+
+CMD ["/thttpd", "-D", "-h", "0.0.0.0", "-p", "3000", "-d", "/home/static", "-u", "static", "-l", "-", "-M", "60"]
+```
 
 To conclude, Docker *can* be used efficiently to package and serve static websites.
 
