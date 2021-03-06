@@ -10,11 +10,11 @@ cover: /assets/images/pleuronectes-limandoides.jpg
 # {{ page.title }}
 {:.no_toc}
 
-The simplicity of the *Dockerfile* format is probably one of the reasons why Docker managed to become so popular in the first place. Getting something working is fairly easy. Producing a clean, small, secure image that will not leak secrets might not be as straight-forward though.
+The simplicity of the *Dockerfile* format is one of the reasons why Docker managed to become so popular in the first place. Getting something working is fairly easy. Producing a clean, small, secure image that will not leak secrets might not be as straight-forward though.
 
-This post will try to share some best practices when writing a *Dockerfile* for a Ruby app, though most of these points should apply to any other runtime as well.
+This post will try to share some best practices when writing a *Dockerfile* for a Ruby app, though most of these points should apply to any other runtime as well. Towards the end, I will provide full examples for three different use cases.
 
-Here's a short summary of what's coming:
+Here's a summary of what's coming:
 
 * Table of Contents
 {:toc}
@@ -617,7 +617,38 @@ Why is this important? Some applications implement signals in order to exit grac
 
 Thanks to [Kamil Grabowski](https://twitter.com/_y3ti) for pointing this out on Twitter.
 
-## 16. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
+## 16. Avoid installing development or test dependencies in your production builds
+
+Bad:
+
+```dockerfile
+FROM ruby:2.5.5
+
+RUN echo 'source "https://rubygems.org"; gem "sinatra"' > Gemfile
+
+RUN bundle install
+```
+
+Good:
+
+```dockerfile
+FROM ruby:2.5.5
+
+RUN echo 'source "https://rubygems.org"; gem "sinatra"' > Gemfile
+
+RUN bundle config set without 'development test'
+RUN bundle install
+```
+
+By default, calling `bundle install` or `yarn install` will include development dependencies. Since these are usually not required in a typical production environment, excluding development and test dependencies from your production *Dockerfile* will speed up your builds and reduce the size of your images.
+
+While we're at it, when installing gems I recommend setting the `--jobs` and `--retry` arguments, as it will speed up the process and make it more resilient to network issues:
+
+```sh
+bundle install --jobs=3 --retry=3
+```
+
+## 17. Optional: Combine production, test and development build processes into a single Dockerfile by using multi-stage builds
 
 In many cases, your test, development and production build processes might slightly differ from each other. If you're using Docker across all these environments, a common approach is to introduce one `Dockerfile` per environment. Keeping these files in sync can gradually become redundant, tedious or just easy to forget.
 
@@ -665,161 +696,243 @@ DOCKER_BUILDKIT=1 docker build --target=test .
 
 Notice the usage of the [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) feature flag. Prior to Docker 18.09 or without adding the `DOCKER_BUILDKIT=1` flag, a full build would still build all stages, including the test stage. The final artifact would still contain only the production dependencies but the build would take a little bit longer.
 
-## Putting it all together...
+## 18. Bonus: Running migrations
 
-Enough with the theory! Let's apply all these best practices on a sample Ruby application.
-
-We will build a simple Sinatra app which, when passed a URL via the `url` query parameter, will parse and return the title of the underlying web page (*nokogiri*, I'm looking at you):
-
-```ruby
-# config.ru
-
-require "sinatra"
-require "open-uri"
-require "nokogiri"
-
-set :bind, "0.0.0.0"
-set :port, 3000
-
-get "/" do
-  url = "https://" + params["url"]
-  html = Nokogiri::HTML(open(url))
-  title = html.xpath("//head//title").first.text
-
-  title
-end
-
-run Sinatra::Application.run!
-
-```
-
-Let's add a `Gemfile` and introduce *nokogiri* to the mix just for the *fun* of installing it:
-
-```ruby
-# Gemfile
-
-source "https://rubygems.org"
-
-gem "sinatra"
-gem "nokogiri"
-
-# Let's assume we're also using a private gem
-# gem "my-private-gem", git: "git@github.com:lipanski/my-private-gem"
-```
-
-Don't forget about the `Gemfile.lock` - which is our way of pinning application dependencies:
-
-```ruby
-# Gemfile.lock
-
-GEM
-  remote: https://rubygems.org/
-  specs:
-    mini_portile2 (2.4.0)
-    mustermann (1.0.3)
-    nokogiri (1.10.4)
-      mini_portile2 (~> 2.4.0)
-    rack (2.0.7)
-    rack-protection (2.0.7)
-      rack
-    sinatra (2.0.7)
-      mustermann (~> 1.0)
-      rack (~> 2.0)
-      rack-protection (= 2.0.7)
-      tilt (~> 2.0)
-    tilt (2.0.9)
-
-PLATFORMS
-  ruby
-
-DEPENDENCIES
-  nokogiri
-  sinatra
-
-BUNDLED WITH
-   1.16.6
-```
-
-You can test this app by starting the server with `bundle exec rackup` and placing a request:
+There are various ways to run migrations in Docker, but the simplest one is by creating a *start script* for your application:
 
 ```sh
-curl "http://localhost:3000/?url=google.com"
+#!/bin/sh
+
+set -e
+
+bundle exec rake db:migrate
+bundle exec rackup
 ```
 
-Let's add a simple `.dockerignore` file:
-
-```
-# .dockerignore
-
-.git/
-README.md
-```
-
-Last but not least, here's our final *Dockerfile* which applies all the best practices mentioned above:
+I usually save this as `bin/start` and use it as my `CMD`:
 
 ```dockerfile
-# Dockerfile
+CMD ["bin/start"]
+```
 
-# 1. Pin your base image version
-# 2. Use only trusted or official base images
-# 12. Minimize image size by opting for small base images when possible
-# 13. Use multi-stage builds to reduce the size of your image
-# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
-FROM ruby:2.5.5-alpine AS builder
+Note that Rails prevents running migrations in parallel from different processes. Deploying two or more containers in parallel might cause all but one of these deployments to fail. Then again, if you deploy containers in parallel, you're most likely using an automated solution (Kubernetes / Nomad / Docker Swarm), at which point your containers should get resurected and should eventually bypass the Rails migration lock.
 
-# 9. Avoid leaking secrets inside your image
-# 11. Fetching private dependencies via a Github token injected through the gitconfig
-# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
-ARG GITHUB_TOKEN
+## Putting it all together...
 
-# 5. Group commands by how likely they are to change individually
-# 6. Place the least likely to change commands at the top
+Enough with the theory! Let's apply these best practices. No app is the same, so I'll provide you with *Dockerfiles* for three different use cases, in order of their complexity.
+
+We'll start with the `.dockerignore` file, which is shared by all examples. The easiest way to produce a `.dockerignore` file is by mirroring your `.gitignore` file, then adding the `.git/` directory to the list:
+
+```sh
+# Start from your .gitignore file
+cp .gitignore .dockerignore
+
+# Exclude the .git/ directory from being copied over into your images
+echo ".git/" >> .dockerignore
+```
+
+## Dockerfile for a plain Ruby app or a Rails app without assets
+
+```dockerfile
+# Start from a small, trusted base image with the version pinned down
+FROM ruby:2.7.1-alpine AS base
+
+# Install system dependencies required both at runtime and build time
+# The image uses Postgres but you can swap it with mariadb-dev (for MySQL) or sqlite-dev
 RUN apk add --update \
-  build-base \
-  libxml2-dev \
-  libxslt-dev \
-  git
+  postgresql-dev \
+  tzdata
 
-# 4. Pin your application dependencies (Gemfile.lock)
+# This stage will be responsible for installing gems
+FROM base AS dependencies
+
+# Install system dependencies required to build some Ruby gems (pg)
+RUN apk add --update build-base
+
 COPY Gemfile Gemfile.lock ./
 
-# 10. Always clean up injected secrets within the same build step
-# 11. Fetching private dependencies via a Github token injected through the gitconfig
-# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
-RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf git@github.com:some-user && \
-  git config --global --add url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf ssh://git@github && \
-  bundle install --without development test && \
-  rm ~/.gitconfig
+# Install gems (excluding development/test dependencies)
+RUN bundle config set without "development test" && \
+  bundle install --jobs=3 --retry=3
 
-# 1. Pin your base image version
-# 2. Use only trusted or official base images
-# 12. Minimize image size by opting for small base images when possible
-# 13. Use multi-stage builds to reduce the size of your image
-# 14. Use multi-stage builds to avoid leaking secrets inside your docker history
-FROM ruby:2.5.5-alpine
+# We're back at the base stage
+FROM base
 
-# 13. Use multi-stage builds to reduce the size of your image
-COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+# Create a non-root user to run the app and own app-specific files
+RUN adduser -D app
 
-# 7. Avoid running your application as root
-RUN adduser -D myuser
-USER myuser
-WORKDIR /home/myuser
+# Switch to this user
+USER app
 
-# 8. When running COPY or ADD (as a different user) use --chown
-COPY --chown=myuser . ./
+# We'll install the app in this directory
+WORKDIR /home/app
 
-# 15. When setting the CMD instruction, prefer the exec format over the shell format
+# Copy over gems from the dependencies stage
+COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
+
+# Finally, copy over the code
+# This is where the .dockerignore file comes into play
+# Note that we have to use `--chown` here
+COPY --chown=app . ./
+
+# Launch the server (or run some other Ruby command)
 CMD ["bundle", "exec", "rackup"]
 ```
 
-You can build this image by running:
+You can build this by calling:
 
 ```sh
-docker build --build-arg GITHUB_TOKEN=xxx -t my-docker-image:v1 .
+docker build -t my-rails-app .
 ```
 
-If your application doesn't require private gems, you can reduce all the lines injecting the `GITHUB_TOKEN` to the much simpler `RUN bundle install` command.
+## Dockerfile for a Rails app with assets
+
+```dockerfile
+# Start from a small, trusted base image with the version pinned down
+FROM ruby:2.7.1-alpine AS base
+
+# Install system dependencies required both at runtime and build time
+# The image uses Postgres but you can swap it with mariadb-dev (for MySQL) or sqlite-dev
+RUN apk add --update \
+  postgresql-dev \
+  tzdata \
+  nodejs \
+  yarn
+
+# This stage will be responsible for installing gems and npm packages
+FROM base AS dependencies
+
+# Install system dependencies required to build some Ruby gems (pg)
+RUN apk add --update build-base
+
+COPY Gemfile Gemfile.lock ./
+
+# Install gems (excluding development/test dependencies)
+RUN bundle config set without "development test" && \
+  bundle install --jobs=3 --retry=3
+
+COPY package.json yarn.lock ./
+
+# Install npm packages
+RUN yarn install --frozen-lockfile
+
+# We're back at the base stage
+FROM base
+
+# Create a non-root user to run the app and own app-specific files
+RUN adduser -D app
+
+# Switch to this user
+USER app
+
+# We'll install the app in this directory
+WORKDIR /home/app
+
+# Copy over gems from the dependencies stage
+COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
+
+# Copy over npm packages from the dependencies stage
+# Note that we have to use `--chown` here
+COPY --chown=app --from=dependencies /node_modules/ node_modules/
+
+# Finally, copy over the code
+# This is where the .dockerignore file comes into play
+# Note that we have to use `--chown` here
+COPY --chown=app . ./
+
+# Install assets
+RUN RAILS_ENV=production SECRET_KEY_BASE=assets bundle exec rake assets:precompile
+
+# Launch the server
+CMD ["bundle", "exec", "rackup"]
+```
+
+You can build this by calling:
+
+```sh
+docker build -t my-rails-app .
+```
+
+## Dockerfile for a Rails app with assets and private dependencies
+
+```dockerfile
+# Start from a small, trusted base image with the version pinned down
+FROM ruby:2.7.1-alpine AS base
+
+# Install system dependencies required both at runtime and build time
+# The image uses Postgres but you can swap it with mariadb-dev (for MySQL) or sqlite-dev
+RUN apk add --update \
+  postgresql-dev \
+  tzdata \
+  nodejs \
+  yarn
+
+# This stage will be responsible for installing gems and npm packages
+FROM base AS dependencies
+
+# The argument is required later, when installing private gems or npm packages
+ARG GITHUB_TOKEN
+
+# Install system dependencies required to build some Ruby gems (pg)
+RUN apk add --update build-base
+
+COPY Gemfile Gemfile.lock ./
+
+# Don't install development or test dependencies
+RUN bundle config set without "development test"
+
+# Install gems (including private ones)
+# This uses the GITHUB_TOKEN argument, which is also cleaned up in the same step
+RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf git@github.com:some-user && \
+  git config --global --add url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf ssh://git@github && \
+  bundle install --jobs=3 --retry=3 && \
+  rm ~/.gitconfig
+
+COPY package.json yarn.lock ./
+
+# Install npm packages (including private ones)
+# This uses the GITHUB_TOKEN argument, which is also cleaned up in the same step
+RUN git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf git@github.com:some-user && \
+  git config --global --add url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/some-user".insteadOf ssh://git@github && \
+  yarn install --frozen-lockfile \
+  rm ~/.gitconfig
+
+# We're back at the base stage
+FROM base
+
+# Create a non-root user to run the app and own app-specific files
+RUN adduser -D app
+
+# Switch to this user
+USER app
+
+# We'll install the app in this directory
+WORKDIR /home/app
+
+# Copy over gems from the dependencies stage
+COPY --from=dependencies /usr/local/bundle/ /usr/local/bundle/
+
+# Copy over npm packages from the dependencies stage
+# Note that we have to use `--chown` here
+COPY --chown=app --from=dependencies /node_modules/ node_modules/
+
+# Finally, copy over the code
+# This is where the .dockerignore file comes into play
+# Note that we have to use `--chown` here
+COPY --chown=app . ./
+
+# Install assets
+RUN RAILS_ENV=production SECRET_KEY_BASE=assets bundle exec rake assets:precompile
+
+# Launch the server
+CMD ["bundle", "exec", "rackup"]
+```
+
+You can build this by calling:
+
+```sh
+docker build --build-arg GITHUB_TOKEN=xxx -t my-rails-app .
+```
 
 The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>. You can find the slides from my talk at the RUG:B meetup [here](/slides/dockerfile/index.html).
 
