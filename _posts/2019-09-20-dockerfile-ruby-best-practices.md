@@ -19,7 +19,7 @@ Here's a summary of what's coming:
 * Table of Contents
 {:toc}
 
-The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>.
+The code presented here can also be found at <https://github.com/lipanski/ruby-dockerfile-example>.
 
 Let's begin:
 
@@ -731,7 +731,7 @@ cp .gitignore .dockerignore
 echo ".git/" >> .dockerignore
 ```
 
-## Dockerfile for a plain Ruby app or a Rails app without assets
+### Dockerfile for a plain Ruby app or a Rails app without assets
 
 ```dockerfile
 # Start from a small, trusted base image with the version pinned down
@@ -785,7 +785,7 @@ You can build this by calling:
 docker build -t my-rails-app .
 ```
 
-## Dockerfile for a Rails app with assets
+### Dockerfile for a Rails app with assets
 
 ```dockerfile
 # Start from a small, trusted base image with the version pinned down
@@ -853,7 +853,7 @@ You can build this by calling:
 docker build -t my-rails-app .
 ```
 
-## Dockerfile for a Rails app with assets and private dependencies
+### Dockerfile for a Rails app with assets and private dependencies
 
 ```dockerfile
 # Start from a small, trusted base image with the version pinned down
@@ -934,7 +934,7 @@ You can build this by calling:
 docker build --build-arg GITHUB_TOKEN=xxx -t my-rails-app .
 ```
 
-The code presented here can also be found on Github: <https://github.com/lipanski/ruby-dockerfile-example>. You can find the slides from my talk at the RUG:B meetup [here](/slides/dockerfile/index.html).
+The code presented here can also be found at <https://github.com/lipanski/ruby-dockerfile-example>.
 
 ## Further reading
 {:.no_toc}

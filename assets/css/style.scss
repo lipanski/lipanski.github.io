@@ -43,6 +43,12 @@ img.cover {
   max-width: 80%;
 }
 
+// Reset margin on nested lists
+li ul {
+  margin-top: 0.25em;
+  margin-bottom: 0;
+}
+
 // Sharing buttons (custom)
 
 a.resp-sharing-button__link {
