@@ -83,17 +83,7 @@
       {% endif %}
 
     </div>
-    {% if site.google_analytics %}
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-        ga('create', '{{ site.google_analytics }}', 'auto');
-        ga('send', 'pageview');
-    </script>
-    {% endif %}
+    <script async defer data-domain="lipanski.com" src="https://analytics.lipanski.com/js/plausible.js"></script>
     <script type="text/javascript" src="https://api.pirsch.io/pirsch.js" id="pirschjs" data-code="wwz8FoiA25Zvu7a9cGeHzTyY0bQft635"></script>
   </body>
 </html>
