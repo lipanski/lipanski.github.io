@@ -56,6 +56,14 @@ direct :rails_public_blob do |blob|
 end
 ```
 
+## Proxy mode
+
+Rails [recently](https://github.com/rails/rails/pull/42305) introduced a way to configure a CDN host for your ActiveStorage assets. This requires a *proxy-enabled* CDN (Cloudflare, CloudFront, nginx etc.) - so using *only* S3 or DigitalOcean Spaces as public file servers is excluded. On top of that, the CDN will fall back to the Rails backend once per uncached file (and again every time the CDN cache is invalidated). Yes, the backend request is fairly cheap (it's just a redirect), but it can get delayed by other slower requests to your backend during peak times.
+
+The solution proposed in my article can serve assets directly from S3 or DigitalOcean Spaces, using these services as public static file servers. At the end of the day, it all depends what kind of CDN you are using, how much you are willing to add to your infrastructure and at which level you'd like to optimize. For your average website I think serving assets directly from S3 or DigitalOcean Spaces is perfectly fine.
+
+You can read more about proxy mode [here](https://edgeguides.rubyonrails.org/active_storage_overview.html#proxy-mode).
+
 ## Variants
 
 If you're using variants, things will look a bit different in your development environment. Running the following code:

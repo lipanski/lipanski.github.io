@@ -60,6 +60,12 @@ a.resp-sharing-button__link, a.resp-sharing-button__link:hover, a.resp-sharing-b
   font-weight: bold;
 }
 
+// Disqus
+
+#disqus_thread a {
+  color: #008080;
+}
+
 // Sharing buttons (sharingbuttons.io)
 
 .resp-sharing-button__link,
