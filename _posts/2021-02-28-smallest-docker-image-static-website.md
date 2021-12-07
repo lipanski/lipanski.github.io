@@ -11,7 +11,7 @@ cover: /assets/images/coryphaena-pentadactyla.jpg
 
 Until recently, I used to think that serving static websites from Docker would be a waste of bandwith and storage. Bundling nginx or various other heavy runtimes inside a Docker image for the sole purpose of serving static files didn't seem like the best idea - Netlify or Github Pages can handle this much better. But my hobby server was sad and cried digital tears.
 
-A recent HackerNews post about [readbean](https://justine.lol/redbean/index.html), a single-binary, super tiny, static file server got me thinking. So begins my journey to find the most time/storage efficient Docker image to serve a static website.
+A recent HackerNews post about [redbean](https://justine.lol/redbean/index.html), a single-binary, super tiny, static file server got me thinking. So begins my journey to find the most time/storage efficient Docker image to serve a static website.
 
 After evaluating a few static file servers with similar specs, I settled for [thttpd](https://www.acme.com/software/thttpd/), which comes with a similar small footprint but seems a bit more battle-tested.
 
