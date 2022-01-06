@@ -57,7 +57,7 @@ section.centered footer {
 <h1>My Experience Using Turbo in Production</h1>
 <footer>Florin Lipan, 2021</footer>
 </section>
-</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-marpit-fragments="9" data-background-color="#fff" data-class="bullets" data-theme="default" data-style="section {
+</foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="2" data-marpit-fragments="8" data-background-color="#fff" data-class="bullets" data-theme="default" data-style="section {
     font-family: Ubuntu;
 }
 
@@ -106,16 +106,12 @@ section.centered footer {
 <ul>
 <li data-marpit-fragment="1">Florin Lipan</li>
 <li data-marpit-fragment="2">Staff Engineer @Chatterbug (We're hiring!)</li>
-<li data-marpit-fragment="3">Turbo
-<ul>
-<li data-marpit-fragment="4">Turbo Drive</li>
-<li data-marpit-fragment="5">Turbo Frames &amp; Turbo Streams</li>
-<li data-marpit-fragment="6">Turbo Streams over Websockets</li>
-</ul>
-</li>
-<li data-marpit-fragment="7">Some things to keep in mind</li>
-<li data-marpit-fragment="8">Writing tests</li>
-<li data-marpit-fragment="9">Scaling</li>
+<li data-marpit-fragment="3">Turbo Drive</li>
+<li data-marpit-fragment="4">Turbo Frames &amp; Turbo Streams</li>
+<li data-marpit-fragment="5">Turbo Streams over Websockets</li>
+<li data-marpit-fragment="6">Some things to keep in mind</li>
+<li data-marpit-fragment="7">Writing tests</li>
+<li data-marpit-fragment="8">Scaling</li>
 </ul>
 </section>
 </foreignObject></svg><svg data-marpit-svg="" viewBox="0 0 1280 720"><foreignObject width="1280" height="720"><section id="3" data-marpit-fragments="4" data-background-color="#fff" data-class="bullets" data-theme="default" data-style="section {
@@ -235,7 +231,7 @@ section.centered footer {
 <li data-marpit-fragment="1">Turbolinks 2.0</li>
 <li data-marpit-fragment="2">Turns every link click or form submission into an XHR call</li>
 <li data-marpit-fragment="3">Replaces the <code>&lt;body&gt;</code> tag, preserves the <code>&lt;head&gt;</code>, adds a loader</li>
-<li data-marpit-fragment="4">Can also extract Turbo frames (if any) and match them correctly</li>
+<li data-marpit-fragment="4">Will extract Turbo frames (if any) and try to match them</li>
 <li data-marpit-fragment="5">Requires special attention when integrated with other tools (React, jQuery)</li>
 </ul>
 </section>
@@ -333,9 +329,9 @@ section.centered footer {
 ;background-color:#fff;background-image:none;">
 <h1>Turbo Frames</h1>
 <ul>
-<li data-marpit-fragment="1"><code>&lt;turbo-frame id=&quot;my-frame&quot;&gt;...&lt;/turbo-frame&gt;</code></li>
-<li data-marpit-fragment="2"><code>&lt;%= turbo_frame_tag(&quot;my-frame&quot;) do %&gt;...&lt;% end %&gt;</code></li>
-<li data-marpit-fragment="3">Defines the boundaries of <strong>a component to be updated on request</strong></li>
+<li data-marpit-fragment="1">Defines the boundaries of <strong>a component to be updated on request</strong></li>
+<li data-marpit-fragment="2"><code>&lt;turbo-frame id=&quot;my-frame&quot;&gt;...&lt;/turbo-frame&gt;</code></li>
+<li data-marpit-fragment="3"><code>&lt;%= turbo_frame_tag(&quot;my-frame&quot;) do %&gt;...&lt;% end %&gt;</code></li>
 <li data-marpit-fragment="4">Should be <strong>unique</strong> - <code>dom_id(...)</code> is your friend</li>
 <li data-marpit-fragment="5">Can be loaded <strong>lazily</strong> (<code>loading=&quot;lazy&quot;</code>)</li>
 </ul>
@@ -391,7 +387,7 @@ section.centered footer {
 <p>A <strong>simple HTTP-based protocol</strong> to provide targeted updates for Turbo frames</p>
 </li>
 <li data-marpit-fragment="2">
-<p>Supports <strong>append/prepend/update/remove/before/after</strong></p>
+<p>Supports <strong>append/prepend/replace/remove/before/after</strong></p>
 <pre><code class="language-html"><svg data-marp-fitting="svg" data-marp-fitting-code><foreignObject><span data-marp-fitting-svg-content><span data-marp-fitting-svg-content-wrap><span class="hljs-tag">&lt;<span class="hljs-name">turbo-stream</span> <span class="hljs-attr">action</span>=<span class="hljs-string">&quot;replace&quot;</span> <span class="hljs-attr">target</span>=<span class="hljs-string">&quot;my-frame&quot;</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">template</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">turbo-frame</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;my-frame&quot;</span>&gt;</span>
@@ -737,8 +733,8 @@ section.centered footer {
 <ul>
 <li data-marpit-fragment="1">Replace <code>link_to</code> with <code>button_to</code> - Turbo Streams <strong>works only on forms</strong></li>
 <li data-marpit-fragment="2">Turbo Streams <strong>doesn't work on forms submitted via GET</strong></li>
-<li data-marpit-fragment="3">Try and forget about Rails UJS (<code>data-remote</code>)</li>
-<li data-marpit-fragment="4">When <strong>rendering with errors</strong> from a controller, set a status that's <strong>not 2xx</strong>: <code>render status: :unprocessable_entity</code></li>
+<li data-marpit-fragment="3"><strong>Navigation within a frame</strong> will target just that frame - unless using <code>target=&quot;_top&quot;</code> or <code>data-turbo-frame=&quot;some-other-frame&quot;</code></li>
+<li data-marpit-fragment="4">When <strong>rendering HTML</strong> from a Turbo form submission, set a status that's <strong>not 2xx</strong>: <code>render status: :unprocessable_entity</code> (or redirect)</li>
 <li data-marpit-fragment="5"><strong>Nesting a <code>&lt;turbo-frame&gt;</code></strong> element <strong>inside a <code>&lt;table&gt;</code></strong> will break the layout: instead Turbo actually allows referencing any element's ID</li>
 <li data-marpit-fragment="6"><strong>Devise</strong> needs a few <a href="https://dev.to/fadrien/rails-devise-and-recaptcha-with-hotwire-turbo-and-stimulus-2hoh">configuration tweaks</a> (or errors are not reported properly)</li>
 </ul>
