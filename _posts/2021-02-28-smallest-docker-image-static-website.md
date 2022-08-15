@@ -15,7 +15,9 @@ A recent HackerNews post about [redbean](https://justine.lol/redbean/index.html)
 
 After evaluating a few static file servers with similar specs, I initially opted for [thttpd](https://www.acme.com/software/thttpd/), which comes with a similar small footprint but seems a bit more battle-tested. This got me to a whooping **186KB** image and you can read more about it in the [previous version](https://github.com/lipanski/lipanski.github.io/blob/8aa8994299d0314b4d113ea481c60561f97c2940/_posts/2021-02-28-smallest-docker-image-static-website.md) of this post.
 
-A later comment (thanks Sergey Ponomarev) suggested the [BusyBox httpd](https://git.busybox.net/busybox/tree/networking/httpd.c) file server, which seemed fairly small and more feature-rich so I gave it a try. Let's see how far we can take this.
+A later comment (thanks Sergey Ponomarev) suggested the [BusyBox httpd](https://git.busybox.net/busybox/tree/networking/httpd.c) file server, which seemed fairly small and more feature-rich so I gave it a try. Let's see if it can produce an even smaller image (spoiler alert: it can).
+
+[BusyBox](https://www.busybox.net/) is much more than just a file server - it's a set of lightweight replacements for many common UNIX utilities, like *shell*, *gzip*, or *echo*.
 
 Running the BusyBox httpd server goes like this:
 
@@ -61,7 +63,7 @@ static   latest   854054cff457   1 second ago   1.25MB
 
 The image is already [built](https://github.com/docker-library/busybox/tree/master/stable/musl) using [`scratch`](https://hub.docker.com/_/scratch), which is basically a *no-op* image, light as vacuum. It contains only the statically compiled BusyBox binary and nothing else. There's not much we can optimize there.
 
-Then again [BusyBox](https://www.busybox.net/) is much more than just a file server - it's a set of lightweight replacements for many common UNIX utilities. Running the `busybox` image comes packaged with all these utilities. We can create a custom build of BusyBox limiting it to only *httpd* and thus reducing its size.
+Then again BusyBox comes packaged with much more than just the static file server - it contains all these other UNIX utilities. We can create a custom build of BusyBox limiting it to only *httpd* and thus reducing its size.
 
 We start by downloading the BusyBox source code:
 
@@ -225,9 +227,9 @@ static   latest   9b08b9509c32   1 second ago   154kB
 
 ![Excellent](/assets/images/excellent.png)
 
-The **154KB** we're left with correspond to the size of the *BusyBox httpd* static binary and the static files that were copied over, which in my case was just one file containing the text `hello world`. Note that the `alpine` step of the multi-stage build is actually quite large in size (*~185MB*), but it can be reused across builds and doesn't get pushed to the registry.
+The **154KB** we're left with correspond to the size of the *BusyBox httpd* static binary and the static files that were copied over, which in my case was just one file containing the text `hello world`. Note that the `alpine` step of the multi-stage build is actually quite large in size (*~185MB*), but it can be reused across builds and doesn't get pushed to the registry. In order to skip the `alpine` step entirely, I pushed the resulting image to the Docker registry.
 
-I've turned the image we built here into a base image for all static websites and pushed it to the Docker registry, so that we can skip the `alpine` step entirely. You can find it on [Docker Hub](https://hub.docker.com/r/lipanski/docker-static-website):
+You can download it from [Docker Hub](https://hub.docker.com/r/lipanski/docker-static-website) and use it to serve your static websites:
 
 ```dockerfile
 FROM lipanski/docker-static-website:latest
