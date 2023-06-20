@@ -47,7 +47,7 @@ docker build \
   --cache-from ${IMAGE}:current-branch \
   --cache-from ${IMAGE}:master \
   --cache-from:${IMAGE}:1.0.0 \
-  -t ${IMAGE_NAME}:current-branch .
+  -t ${IMAGE}:current-branch .
 
 # Push the new version to the registry so that we can use it as a cache for future builds
 docker push ${IMAGE}:current-branch
