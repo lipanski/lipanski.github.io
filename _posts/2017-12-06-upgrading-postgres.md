@@ -2,7 +2,6 @@
 layout: default
 title: "Upgrading Postgres and migrating your data to the new version"
 tags: devops
-comments: true
 ---
 
 # {{ page.title }}

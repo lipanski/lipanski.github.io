@@ -3,7 +3,7 @@ layout: default
 title: "Some things you should know about eager loading in ActiveRecord"
 favourite: true
 tags: ruby
-comments: true
+comments_url: https://github.com/lipanski/lipanski.github.io/discussions/7
 cover: /assets/images/cyprinus-dobula.jpg
 ---
 

@@ -2,7 +2,7 @@
 layout: default
 title: "Speed up your Docker builds with --cache-from"
 tags: devops 
-comments: true
+comments_url: https://github.com/lipanski/lipanski.github.io/discussions/11
 cover: /assets/images/chaetodon-guttatus.jpg
 ---
 

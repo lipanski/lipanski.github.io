@@ -2,7 +2,6 @@
 layout: default
 title: "Linux: How to make your own keyboard layout"
 tags: linux
-comments: true
 cover: /assets/images/gadus-molva.jpg
 ---
 

@@ -2,7 +2,7 @@
 layout: default
 title: "The smallest Docker image to serve static websites"
 tags: devops
-comments: true
+comments_url: https://github.com/lipanski/lipanski.github.io/discussions/6
 favourite: true
 cover: /assets/images/coryphaena-pentadactyla.jpg
 ---

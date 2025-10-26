@@ -3,7 +3,7 @@ layout: default
 title: "One Ruby file to rule them all: inline gems and inline ActiveRecord migrations"
 favourite: true
 tags: ruby
-comments: true
+comments_url: https://github.com/lipanski/lipanski.github.io/discussions/9
 cover: /assets/images/salmo-thymallus.jpg
 ---
 

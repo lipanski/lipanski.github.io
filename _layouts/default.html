@@ -63,22 +63,8 @@
         {% endif %}
       </section>
 
-      {% if page.comments %}
-      <div id="disqus_thread"></div>
-      <script>
-        var disqus_config = function () {
-          this.page.url = '{{ page | absolute_url }}';
-          this.page.identifier = '{{ page.id }}';
-        };
-
-        (function() { // DON'T EDIT BELOW THIS LINE
-          var d = document, s = d.createElement('script');
-          s.src = 'https://lipanski.disqus.com/embed.js';
-          s.setAttribute('data-timestamp', +new Date());
-          (d.head || d.body).appendChild(s);
-        })();
-      </script>
-      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments.</a></noscript>
+      {% if page.comments_url %}
+      <p>Leave your comments or questions on <strong><a href="{% page.comments_url %}">Github Discussions</a></strong></p>
       {% endif %}
 
     </div>

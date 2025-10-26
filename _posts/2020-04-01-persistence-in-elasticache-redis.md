@@ -3,7 +3,7 @@ layout: default
 title: "Persistence in (AWS ElastiCache) Redis"
 favourite: true
 tags: devops
-comments: true
+comments_url: https://github.com/lipanski/lipanski.github.io/discussions/10
 cover: /assets/images/trigla-pini.jpg
 ---
 

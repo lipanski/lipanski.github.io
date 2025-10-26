@@ -2,7 +2,6 @@
 layout: default
 title: "Blocking malicious requests with nginx + ModSecurity"
 tags: devops
-comments: true
 cover: /assets/images/holocentrus-punctatus.jpg
 ---
 

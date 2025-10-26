@@ -2,7 +2,6 @@
 layout: default
 title: "Serving ActiveStorage uploads through a CDN with Rails direct routes"
 tags: ruby
-comments: true
 cover: /assets/images/cyprinus-aspius.jpg
 ---
 
